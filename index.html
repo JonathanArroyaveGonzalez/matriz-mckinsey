@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Matriz GE-McKinsey Dinámica - Editor Universal</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -21,202 +22,237 @@
 
   <div class="main-container">
     <div class="control-panel">
-      <!-- Factores Internos -->
-      <div class="section">
-        <h3>🏢 Factores Internos (Fortalezas)</h3>
-        <table id="internal-factors">
-          <thead>
-            <tr>
-              <th>Factor</th>
-              <th>Peso (%)</th>
-              <th><button class="btn btn-success" onclick="addInternalFactor()">+ Factor</button></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><input type="text" value="Liderazgo Tecnológico" onchange="updateMatrix()"></td>
-              <td><input type="number" class="factor-weight" value="25" min="1" max="100" onchange="updateWeights('internal')"></td>
-              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
-            </tr>
-            <tr>
-              <td><input type="text" value="Disponibilidad Plataformas" onchange="updateMatrix()"></td>
-              <td><input type="number" class="factor-weight" value="20" min="1" max="100" onchange="updateWeights('internal')"></td>
-              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
-            </tr>
-            <tr>
-              <td><input type="text" value="Base de Clientes B2B" onchange="updateMatrix()"></td>
-              <td><input type="number" class="factor-weight" value="20" min="1" max="100" onchange="updateWeights('internal')"></td>
-              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
-            </tr>
-            <tr>
-              <td><input type="text" value="Experiencia Regional" onchange="updateMatrix()"></td>
-              <td><input type="number" class="factor-weight" value="15" min="1" max="100" onchange="updateWeights('internal')"></td>
-              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
-            </tr>
-            <tr>
-              <td><input type="text" value="Capacidad de Innovación" onchange="updateMatrix()"></td>
-              <td><input type="number" class="factor-weight" value="20" min="1" max="100" onchange="updateWeights('internal')"></td>
-              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr>
-              <th>Total Peso:</th>
-              <th id="internal-total" style="color: #28a745;">100%</th>
-              <th></th>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-
-      <!-- Factores Externos -->
-      <div class="section">
-        <h3>🌍 Factores Externos (Atractivo)</h3>
-        <table id="external-factors">
-          <thead>
-            <tr>
-              <th>Factor</th>
-              <th>Peso (%)</th>
-              <th><button class="btn btn-success" onclick="addExternalFactor()">+ Factor</button></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><input type="text" value="Transformación Digital" onchange="updateMatrix()"></td>
-              <td><input type="number" class="factor-weight" value="30" min="1" max="100" onchange="updateWeights('external')"></td>
-              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
-            </tr>
-            <tr>
-              <td><input type="text" value="Crecimiento Fintech" onchange="updateMatrix()"></td>
-              <td><input type="number" class="factor-weight" value="25" min="1" max="100" onchange="updateWeights('external')"></td>
-              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
-            </tr>
-            <tr>
-              <td><input type="text" value="Regulaciones Favorables" onchange="updateMatrix()"></td>
-              <td><input type="number" class="factor-weight" value="20" min="1" max="100" onchange="updateWeights('external')"></td>
-              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
-            </tr>
-            <tr>
-              <td><input type="text" value="Demanda B2B Colombia" onchange="updateMatrix()"></td>
-              <td><input type="number" class="factor-weight" value="25" min="1" max="100" onchange="updateWeights('external')"></td>
-              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr>
-              <th>Total Peso:</th>
-              <th id="external-total" style="color: #28a745;">100%</th>
-              <th></th>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-
-      <!-- Productos/UEN -->
-      <div class="section">
-        <h3>📊 Productos/Unidades de Negocio</h3>
-        <button class="btn btn-success" onclick="addProduct()" style="margin-bottom: 10px;">+ Agregar Producto</button>
-        <div id="products-container" style="max-height: 200px; overflow-y: auto;">
-          <!-- Los productos se cargarán dinámicamente -->
-        </div>
-      </div>
-
-      <!-- Fechas Personalizables -->
-      <div class="section">
-        <h3>📅 Fechas de Análisis</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Período</th>
-              <th>Fecha</th>
-              <th>Acción</th>
-            </tr>
-          </thead>
-          <tbody id="dates-table">
-            <tr>
-              <td><input type="text" value="Actual" onchange="updateDateLabels()"></td>
-              <td><input type="date" value="2024-01-01" onchange="updateDateLabels()"></td>
-              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
-            </tr>
-            <tr>
-              <td><input type="text" value="Año 1" onchange="updateDateLabels()"></td>
-              <td><input type="date" value="2025-01-01" onchange="updateDateLabels()"></td>
-              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
-            </tr>
-            <tr>
-              <td><input type="text" value="Año 2" onchange="updateDateLabels()"></td>
-              <td><input type="date" value="2026-01-01" onchange="updateDateLabels()"></td>
-              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
-            </tr>
-            <tr>
-              <td><input type="text" value="Año 3" onchange="updateDateLabels()"></td>
-              <td><input type="date" value="2027-01-01" onchange="updateDateLabels()"></td>
-              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
-            </tr>
-          </tbody>
-        </table>
-        <button class="btn btn-success" onclick="addDatePeriod()">+ Agregar Fecha</button>
-      </div>
-
-      <!-- Controles -->
-      <div class="section">
-        <h3>🎛️ Controles</h3>
-        <div class="controls">
-          <button class="btn" onclick="showAllYears()">📊 Ver Todos</button>
-          <button class="btn btn-secondary" onclick="exportMatrix()">💾 Exportar</button>
-          <button class="btn" onclick="showProjectionModal()">⏭️ Proyecciones</button>
-          <button class="btn btn-secondary" onclick="animateMovements()">🎬 Animar</button>
-        </div>
-        <div class="year-filter" id="year-filter">
-          <!-- Los botones de filtro se generarán dinámicamente -->
-        </div>
-      </div>
-
-      <!-- Selector de Color -->
-      <div class="section">
-        <h3>🎨 Colores de Productos</h3>
-        <div class="color-picker-section">
-          <h4>Producto Seleccionado: <span id="selected-product-name">Ninguno</span></h4>
-          <div class="color-palette">
-            <div class="color-option" style="background: #10b981" data-color="#10b981" title="Verde - Invertir/Crecer"></div>
-            <div class="color-option" style="background: #f59e0b" data-color="#f59e0b" title="Amarillo - Selectividad"></div>
-            <div class="color-option" style="background: #ef4444" data-color="#ef4444" title="Rojo - Cosechar/Retirar"></div>
-            <div class="color-option" style="background: #3b82f6" data-color="#3b82f6" title="Azul"></div>
-            <div class="color-option" style="background: #8b5cf6" data-color="#8b5cf6" title="Púrpura"></div>
-            <div class="color-option" style="background: #06b6d4" data-color="#06b6d4" title="Cian"></div>
-            <div class="color-option" style="background: #f97316" data-color="#f97316" title="Naranja"></div>
-            <div class="color-option" style="background: #84cc16" data-color="#84cc16" title="Lima"></div>
-            <div class="color-option" style="background: #ec4899" data-color="#ec4899" title="Rosa"></div>
-            <div class="color-option" style="background: #6b7280" data-color="#6b7280" title="Gris"></div>
+      <!-- Fila 1: Tablas de Evaluación lado a lado -->
+      <div class="tables-row" style="display: flex; gap: 20px; margin-bottom: 30px;">
+        <!-- Tabla de Evaluación - Factores Internos -->
+        <div class="table-section" style="flex: 1; min-width: 0;">
+          <h3>🏢 Factores Internos (Fortalezas)</h3>
+          <div style="margin-bottom: 10px;">
+            <button class="btn btn-success btn-sm" onclick="addInternalFactor()">+ Factor</button>
+            <button class="btn btn-primary btn-sm" onclick="addProductRow()">+ Producto</button>
           </div>
-          <div class="custom-color-input">
-            <label>Color personalizado:</label>
-            <input type="color" id="custom-color" value="#2c5aa0">
-            <button class="btn" onclick="applyCustomColor()">Aplicar</button>
+          <div style="overflow-x: auto;">
+            <table id="internal-evaluation-table" class="evaluation-table">
+              <thead>
+                <tr>
+                  <th rowspan="2" style="vertical-align: middle;">Producto</th>
+                  <th colspan="5">Factores Internos</th>
+                  <th rowspan="2" style="vertical-align: middle;">Coord. X</th>
+                  <th rowspan="2" style="vertical-align: middle;">Acciones</th>
+                </tr>
+                <tr id="internal-factors-header">
+                  <th>
+                    <div>Liderazgo Tecnológico</div>
+                    <input type="number" class="factor-weight" value="25" min="0" max="100" onchange="updateInternalCalculations()" style="width: 50px;">%
+                  </th>
+                  <th>
+                    <div>Disponibilidad Plataformas</div>
+                    <input type="number" class="factor-weight" value="20" min="0" max="100" onchange="updateInternalCalculations()" style="width: 50px;">%
+                  </th>
+                  <th>
+                    <div>Base Clientes B2B</div>
+                    <input type="number" class="factor-weight" value="20" min="0" max="100" onchange="updateInternalCalculations()" style="width: 50px;">%
+                  </th>
+                  <th>
+                    <div>Experiencia Regional</div>
+                    <input type="number" class="factor-weight" value="15" min="0" max="100" onchange="updateInternalCalculations()" style="width: 50px;">%
+                  </th>
+                  <th>
+                    <div>Capacidad Innovación</div>
+                    <input type="number" class="factor-weight" value="20" min="0" max="100" onchange="updateInternalCalculations()" style="width: 50px;">%
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="internal-products-tbody">
+                <!-- Las filas de productos se generarán dinámicamente -->
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Total Pesos:</th>
+                  <th colspan="5" id="internal-weights-total" style="color: #28a745;">100%</th>
+                  <th></th>
+                  <th></th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tabla de Evaluación - Factores Externos -->
+        <div class="table-section" style="flex: 1; min-width: 0;">
+          <h3>🌍 Factores Externos (Atractivo)</h3>
+          <div style="margin-bottom: 10px;">
+            <button class="btn btn-success btn-sm" onclick="addExternalFactor()">+ Factor</button>
+          </div>
+          <div style="overflow-x: auto;">
+            <table id="external-evaluation-table" class="evaluation-table">
+              <thead>
+                <tr>
+                  <th rowspan="2" style="vertical-align: middle;">Producto</th>
+                  <th colspan="4">Factores Externos</th>
+                  <th rowspan="2" style="vertical-align: middle;">Coord. Y</th>
+                  <th rowspan="2" style="vertical-align: middle;">Acciones</th>
+                </tr>
+                <tr id="external-factors-header">
+                  <th>
+                    <div>Transformación Digital</div>
+                    <input type="number" class="factor-weight" value="30" min="0" max="100" onchange="updateExternalCalculations()" style="width: 50px;">%
+                  </th>
+                  <th>
+                    <div>Crecimiento Fintech</div>
+                    <input type="number" class="factor-weight" value="25" min="0" max="100" onchange="updateExternalCalculations()" style="width: 50px;">%
+                  </th>
+                  <th>
+                    <div>Regulaciones Favorables</div>
+                    <input type="number" class="factor-weight" value="20" min="0" max="100" onchange="updateExternalCalculations()" style="width: 50px;">%
+                  </th>
+                  <th>
+                    <div>Demanda B2B Colombia</div>
+                    <input type="number" class="factor-weight" value="25" min="0" max="100" onchange="updateExternalCalculations()" style="width: 50px;">%
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="external-products-tbody">
+                <!-- Las filas de productos se generarán dinámicamente -->
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Total Pesos:</th>
+                  <th colspan="4" id="external-weights-total" style="color: #28a745;">100%</th>
+                  <th></th>
+                  <th></th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fila 2: Fechas y Controles -->
+      <div class="controls-row" style="display: flex; gap: 20px; margin-bottom: 20px;">
+
+        <!-- Controles -->
+        <div class="section" style="flex: 1;">
+          <h3>🎛️ Controles</h3>
+          <div class="controls" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+            <!--<button class="btn btn-sm" onclick="showAllYears()">📊 Ver Todos</button>-->
+            <button class="btn btn-secondary btn-sm" onclick="exportMatrix()">💾 Exportar</button>
+            <!--<button class="btn btn-sm" onclick="showProjectionModal()">⏭️ Proyecciones</button>-->
+            <button class="btn btn-secondary btn-sm" onclick="animateMovements()">🎬 Animar</button>
+          </div>
+          <div class="year-filter" id="year-filter" style="margin-top: 10px;">
+            <!-- Los botones de filtro se generarán dinámicamente -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Fila 3: Selector de Color y Leyenda -->
+      <div class="color-row" style="display: flex; gap: 20px; margin-bottom: 20px;">
+        <!-- Selector de Color -->
+        <div class="section" style="flex: 2;">
+          <h3>🎨 Colores de Productos</h3>
+          <div class="color-picker-section">
+            <div style="display: flex; gap: 15px; margin-bottom: 15px; align-items: center;">
+              <div style="flex: 1;">
+                <label for="product-selector" style="display: block; margin-bottom: 5px; font-weight: bold;">Seleccionar Producto:</label>
+                <select id="product-selector" class="product-select" onchange="updateSelectedProduct()">
+                  <option value="">-- Seleccionar producto --</option>
+                </select>
+              </div>
+              <div style="flex: 1;">
+                <label for="color-selector" style="display: block; margin-bottom: 5px; font-weight: bold;">Seleccionar Color:</label>
+                <select id="color-selector" class="color-select" onchange="applySelectedColor()">
+                  <option value="">-- Seleccionar color --</option>
+                  <option value="#10b981" style="background: #10b981; color: white;">🟢 Verde - Invertir/Crecer</option>
+                  <option value="#f59e0b" style="background: #f59e0b; color: white;">🟡 Amarillo - Selectividad</option>
+                  <option value="#ef4444" style="background: #ef4444; color: white;">🔴 Rojo - Cosechar/Retirar</option>
+                  <option value="#3b82f6" style="background: #3b82f6; color: white;">🔵 Azul</option>
+                  <option value="#8b5cf6" style="background: #8b5cf6; color: white;">🟣 Púrpura</option>
+                  <option value="#06b6d4" style="background: #06b6d4; color: white;">🩵 Cian</option>
+                  <option value="#f97316" style="background: #f97316; color: white;">🟠 Naranja</option>
+                  <option value="#84cc16" style="background: #84cc16; color: white;">🟢 Lima</option>
+                  <option value="#ec4899" style="background: #ec4899; color: white;">🩷 Rosa</option>
+                  <option value="#6b7280" style="background: #6b7280; color: white;">⚫ Gris</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="custom-color-input">
+              <label>Color personalizado:</label>
+              <input type="color" id="custom-color" value="#2c5aa0">
+              <button class="btn btn-sm" onclick="applyCustomColorToSelected()">Aplicar</button>
+            </div>
+            
+            <div style="margin-top: 15px; padding: 10px; background: #f0f8ff; border-radius: 5px; border: 1px solid #2c5aa0;">
+              <strong>Producto actual:</strong> <span id="selected-product-display">Ninguno seleccionado</span><br>
+              <strong>Color actual:</strong> <span id="selected-color-display" style="display: inline-block; width: 20px; height: 20px; border-radius: 50%; border: 1px solid #ccc; margin-left: 5px;"></span>
+            </div>
+            
+            <p style="font-size: 10px; color: #666; margin-top: 10px;">
+              💡 Selecciona un producto y un color de las listas desplegables
+            </p>
+          </div>
+        </div>
+
+        <!-- Tabla de Ventas y Participación -->
+        <div class="section" style="flex: 2;">
+          <h3>💰 Ventas y Participación</h3>
+          <div style="overflow-x: auto;">
+            <table class="evaluation-table">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Ventas ($)<br><small style="font-weight: normal;">70% del tamaño</small></th>
+                  <th>Participación (%)<br><small style="font-weight: normal;">30% del tamaño</small></th>
+                  <th>Tamaño Burbuja<br><small style="font-weight: normal;">% del máximo</small></th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="sales-table-body">
+                <!-- Las filas se generarán dinámicamente -->
+              </tbody>
+              <tfoot>
+                <tr style="background: #f8f9fa; font-weight: bold;">
+                  <th>Total:</th>
+                  <th id="total-sales">$0</th>
+                  <th id="total-share">0%</th>
+                  <th>-</th>
+                  <th>-</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <div style="margin-top: 10px;">
+            <button class="btn btn-primary btn-sm" onclick="addProductToSalesTable()">+ Agregar Producto</button>
           </div>
           <p style="font-size: 10px; color: #666; margin-top: 10px;">
-            💡 Haz clic en un producto de la matriz y luego selecciona un color para cambiarlo
+            💡 <strong>Tamaño Burbuja =</strong> Ventas (70%) + Participación (30%) - Los cambios se reflejan automáticamente en la matriz
           </p>
         </div>
-      </div>
 
-      <div class="legend">
-        <h4 style="margin-top: 0; color: #2c5aa0">🗝️ Leyenda</h4>
-        <div class="legend-item">
-          <div class="legend-color" style="background: #10b981"></div>
-          <span>Invertir/Crecer</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-color" style="background: #f59e0b"></div>
-          <span>Selectividad</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-color" style="background: #ef4444"></div>
-          <span>Cosechar/Retirar</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-color" style="background: #94a3b8; border: 2px dashed #666"></div>
-          <span>Proyección futura</span>
+        <!-- Leyenda -->
+        <div class="section" style="flex: 1;">
+          <h4 style="margin-top: 0; color: #2c5aa0">🗝️ Leyenda</h4>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #10b981"></div>
+            <span>Invertir/Crecer</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #f59e0b"></div>
+            <span>Selectividad</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #ef4444"></div>
+            <span>Cosechar/Retirar</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #94a3b8; border: 2px dashed #666"></div>
+            <span>Proyección futura</span>
+          </div>
+          <div style="margin-top: 15px; font-size: 12px; color: #666;">
+            <strong>Tamaño de círculo:</strong><br>
+            Proporcional al % de participación de mercado
+          </div>
         </div>
       </div>
     </div>
@@ -229,7 +265,32 @@
   <!-- Tooltip -->
   <div id="tooltip" class="tooltip"></div>
 
-  <!-- Modal -->
+  <!-- Panel de Gestión de Datos -->
+  <div style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+    <div style="background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border: 2px solid #2c5aa0;">
+      <h4 style="margin: 0 0 10px 0; color: #2c5aa0; font-size: 14px;">💾 Gestión de Datos</h4>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button class="btn btn-sm" onclick="saveToLocalStorage()" style="font-size: 12px;">
+          💾 Guardar Manual
+        </button>
+        <button class="btn btn-sm" onclick="exportData()" style="font-size: 12px;">
+          📥 Exportar JSON
+        </button>
+        <input type="file" id="importFile" accept=".json" onchange="importData(this)" style="display: none;">
+        <button class="btn btn-sm" onclick="document.getElementById('importFile').click()" style="font-size: 12px;">
+          📤 Importar JSON
+        </button>
+        <button class="btn btn-sm" onclick="clearLocalStorage()" style="font-size: 12px; background: #dc3545; color: white;">
+          🗑️ Resetear Todo
+        </button>
+      </div>
+      <p style="font-size: 10px; color: #666; margin: 8px 0 0 0;">
+        Auto-guardado activo ✅
+      </p>
+    </div>
+  </div>
+
+  <!-- Modal Proyecciones -->
   <div id="projectionModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -246,52 +307,8 @@
 
   <!-- JavaScript al final -->
   <script>
-    let currentFilter = 'Actual';
-    let selectedProductIndex = -1;
-    let products = []; // ✅ Inicialización obligatoria
-
-    const svg = document.getElementById('matrix-svg');
-    const tooltip = document.getElementById('tooltip');
-    const MARGIN = 80;
-    const WIDTH = 1000 - 2 * MARGIN;
-    const HEIGHT = 600 - 2 * MARGIN;
-
-    // Funciones básicas de inicialización - stubs que serán implementadas en script.js
-    function initializeMatrix() {
-      console.log('Inicializando matriz...');
-      if (typeof loadProductsTable === 'function') loadProductsTable();
-      if (typeof updateDateLabels === 'function') updateDateLabels();
-      if (typeof updateWeights === 'function') {
-        updateWeights('internal');
-        updateWeights('external');
-      }
-      if (typeof drawMatrix === 'function') drawMatrix();
-      if (typeof setupColorPicker === 'function') setupColorPicker();
-    }
-
-    // Stubs para las funciones que están en script.js
-    function editTitle(titleId) { console.log('editTitle:', titleId); }
-    function saveTitle(titleId) { console.log('saveTitle:', titleId); }
-    function saveTitleOnEnter(event, titleId) { console.log('saveTitleOnEnter:', titleId); }
-    function addInternalFactor() { console.log('addInternalFactor'); }
-    function addExternalFactor() { console.log('addExternalFactor'); }
-    function removeRow(button) { console.log('removeRow'); }
-    function updateMatrix() { console.log('updateMatrix'); }
-    function updateWeights(type) { console.log('updateWeights:', type); }
-    function addProduct() { console.log('addProduct'); }
-    function updateDateLabels() { console.log('updateDateLabels'); }
-    function addDatePeriod() { console.log('addDatePeriod'); }
-    function showAllYears() { console.log('showAllYears'); }
-    function exportMatrix() { console.log('exportMatrix'); }
-    function showProjectionModal() { console.log('showProjectionModal'); }
-    function animateMovements() { console.log('animateMovements'); }
-    function applyCustomColor() { console.log('applyCustomColor'); }
-    function closeProjectionModal() { console.log('closeProjectionModal'); }
-    function saveProjections() { console.log('saveProjections'); }
-
-    // Ejecutar al cargar
-    window.onload = initializeMatrix;
+    // Todas las variables y funciones están en script.js - v5.0
   </script>
-  <script src="script.js"></script> <!-- Archivo con todas las funciones implementadas -->
+  <script src="script.js?v=5.0"></script> <!-- Funciones completas + flechas dinámicas + gráfico torta -->
 </body>
 </html>

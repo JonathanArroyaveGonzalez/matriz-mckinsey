@@ -1,3 +1,24 @@
+/* Estilos para selects de productos y colores */
+.product-select, .color-select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 2px solid #2c5aa0;
+  border-radius: 8px;
+  background: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.product-select:focus, .color-select:focus {
+  outline: none;
+  border-color: #1e40af;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.color-select option {
+  padding: 8px;
+}
+
 /* Estilos generales del cuerpo */
 body {
   margin: 0;
@@ -47,6 +68,214 @@ body {
 
 .header .subtitle:hover {
   background-color: #f0f4f8;
+}
+
+/* Estilos para las tablas de evaluación */
+.evaluation-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0;
+  font-size: 12px;
+}
+
+.evaluation-table th {
+  background: linear-gradient(135deg, #2c5aa0 0%, #1e3a6f 100%);
+  color: white;
+  padding: 8px 4px;
+  text-align: center;
+  border: 1px solid #ddd;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.evaluation-table th div {
+  margin-bottom: 5px;
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.evaluation-table th input {
+  width: 50px;
+  padding: 2px;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 3px;
+  text-align: center;
+  font-size: 10px;
+  background: rgba(255,255,255,0.9);
+}
+
+.evaluation-table td {
+  border: 1px solid #ddd;
+  padding: 4px;
+  text-align: center;
+  background: white;
+}
+
+.evaluation-table .product-name-cell {
+  background: #f8f9fa;
+  font-weight: 600;
+  text-align: left;
+  min-width: 120px;
+  padding: 8px;
+}
+
+.evaluation-table .product-name-cell input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-weight: 600;
+}
+
+.evaluation-table .score-input {
+  width: 40px;
+  padding: 4px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.evaluation-table .score-input:focus {
+  outline: none;
+  border-color: #2c5aa0;
+  box-shadow: 0 0 0 2px rgba(44, 90, 160, 0.2);
+}
+
+.evaluation-table .coordinate-cell {
+  background: #e8f4f8;
+  font-weight: bold;
+  color: #2c5aa0;
+  font-size: 14px;
+  min-width: 60px;
+}
+
+.evaluation-table .actions-cell {
+  background: #f8f9fa;
+  min-width: 80px;
+}
+
+.evaluation-table tfoot th {
+  background: #28a745;
+  color: white;
+}
+
+/* Colores para calificaciones */
+.score-1 { background-color: #fee2e2; color: #dc2626; }
+.score-2 { background-color: #fed7aa; color: #ea580c; }
+.score-3 { background-color: #fef3c7; color: #d97706; }
+.score-4 { background-color: #d1fae5; color: #059669; }
+.score-5 { background-color: #dcfce7; color: #16a34a; }
+
+/* Layout responsivo para filas organizadas */
+.tables-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.controls-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.color-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 1200px) {
+  .tables-row {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .controls-row {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .color-row {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .evaluation-table {
+    font-size: 10px;
+  }
+  
+  .evaluation-table th div {
+    font-size: 9px;
+  }
+  
+  .evaluation-table th input {
+    width: 40px;
+    font-size: 9px;
+  }
+  
+  .score-input {
+    width: 35px;
+  }
+}
+
+/* Estilos para gráfico de torta */
+#pie-chart-container {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  transition: all 0.3s ease;
+}
+
+#pie-chart-container:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Estilos para flechas de movimiento */
+.movement-arrow {
+  animation: arrowPulse 2s ease-in-out infinite;
+}
+
+.dynamic-arrow {
+  transition: all 0.2s ease;
+}
+
+.dynamic-arrow:hover {
+  stroke-width: 4 !important;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+}
+
+@keyframes arrowPulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+/* Mejoras al layout de matriz */
+.matrix-container {
+  position: relative;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para botones pequeños */
+.btn-sm {
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 3px;
+}
+
+/* Mejoras a los inputs de fecha */
+input[type="date"] {
+  padding: 4px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  font-size: 12px;
 }
 
 /* Contenedor principal - ahora vertical */
@@ -309,16 +538,18 @@ input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus {
 /* Tooltip */
 .tooltip {
   position: absolute;
-  background: rgba(0, 0, 0, 0.8);
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(44, 90, 160, 0.95));
   color: white;
-  padding: 8px;
-  border-radius: 4px;
-  font-size: 11px;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.4;
   pointer-events: none;
   z-index: 1000;
-  max-width: 200px;
-  opacity: 0;
-  transition: opacity 0.2s;
+  max-width: 250px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
 }
 
 .tooltip.show {
@@ -459,9 +690,28 @@ input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus {
 /* Estilos para productos con colores personalizados */
 .product-circle {
   transition: all 0.3s ease;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
 }
-
+/*
 .product-circle:hover {
   transform: scale(1.1);
-  filter: brightness(1.1);
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3)) brightness(1.1);
+  cursor: pointer;
+}*/
+
+/* Mejora visual para el SVG de la matriz */
+#matrix-svg {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-radius: 10px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Animación para texto de porcentaje */
+.percentage-text {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
 }
