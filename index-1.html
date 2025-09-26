@@ -1,0 +1,856 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Matriz GE‑McKinsey Dinámica</title>
+  <style>
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial;margin:0;background:linear-gradient(135deg, #0f172a 0%, #1e293b 100%);color:#e6eef8;min-height:100vh}
+    .container{max-width:1400px;margin:20px auto;padding:20px;display:grid;grid-template-columns:450px 1fr;gap:25px}
+    .card{background:rgba(255,255,255,0.06);border-radius:16px;padding:20px;box-shadow:0 12px 30px rgba(0,0,0,.3);border:1px solid rgba(255,255,255,0.08)}
+    .section{margin-bottom:25px}
+    h3{color:#60a5fa;margin:0 0 15px 0;font-size:16px;font-weight:600}
+    table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:15px;background:rgba(0,0,0,0.2);border-radius:8px;overflow:hidden}
+    th,td{border:1px solid rgba(255,255,255,0.1);padding:8px 4px;text-align:center}
+    th{background:rgba(96,165,250,0.15);color:#93c5fd;font-weight:600;font-size:11px}
+    input[type="text"],input[type="number"]{width:100%;max-width:80px;background:rgba(30,41,59,0.8);border:1px solid rgba(96,165,250,0.3);border-radius:4px;color:#fff;text-align:center;padding:4px;font-size:11px}
+    input[type="text"]:focus,input[type="number"]:focus{outline:none;border-color:#60a5fa;box-shadow:0 0 0 2px rgba(96,165,250,0.2)}
+    .percentage-input{width:50px!important;background:rgba(34,197,94,0.2)!important;border-color:rgba(34,197,94,0.5)!important}
+    .canvas{height:700px;background:linear-gradient(135deg, #1e293b 0%, #334155 100%);border-radius:16px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,0.1)}
+    svg{width:100%;height:100%}
+    .btn{margin:5px 5px 0 0;padding:8px 12px;border:none;border-radius:8px;cursor:pointer;font-size:11px;font-weight:500;transition:all 0.2s}
+    .btn-primary{background:linear-gradient(135deg, #3b82f6, #1d4ed8);color:#fff}
+    .btn-success{background:linear-gradient(135deg, #10b981, #059669);color:#fff}
+    .btn-danger{background:linear-gradient(135deg, #ef4444, #dc2626);color:#fff}
+    .btn-secondary{background:rgba(100,116,139,0.8);color:#fff}
+    .btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.3)}
+    .column-controls{background:rgba(0,0,0,0.2);padding:10px;border-radius:8px;margin-bottom:10px}
+    .column-input{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+    .column-input input{flex:1}
+    .coord-display{background:rgba(96,165,250,0.1);padding:8px;border-radius:6px;margin-top:10px;font-size:12px;text-align:center;border:1px solid rgba(96,165,250,0.3)}
+    .total-weight{color:#fbbf24;font-weight:600}
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="card">
+    <!-- Factores Internos -->
+    <div class="section">
+      <h3>🏢 Factores Internos (Fortalezas de la Organización)</h3>
+      <div class="column-controls">
+        <div class="column-input">
+          <input type="text" id="new-internal-column" placeholder="Nombre del factor">
+          <input type="number" id="new-internal-weight" placeholder="%" class="percentage-input" min="0" max="100" step="1">
+          <button class="btn btn-success" onclick="agregarColumna('internos')">+ Agregar</button>
+        </div>
+        <div style="font-size:11px;color:#94a3b8;">Los porcentajes representan la importancia relativa de cada factor</div>
+      </div>
+      <table id="tabla-internos">
+        <thead>
+          <tr>
+            <th style="width:120px">Producto/UEN</th>
+            <th data-column="calidad" data-weight="25">Calidad<br><span class="percentage-input" style="background:none;border:none;color:#22c55e">25%</span></th>
+            <th data-column="tecnologia" data-weight="20">Tecnología<br><span class="percentage-input" style="background:none;border:none;color:#22c55e">20%</span></th>
+            <th data-column="canales" data-weight="15">Canales<br><span class="percentage-input" style="background:none;border:none;color:#22c55e">15%</span></th>
+            <th data-column="imagen" data-weight="25">Imagen<br><span class="percentage-input" style="background:none;border:none;color:#22c55e">25%</span></th>
+            <th data-column="recursos" data-weight="15">Recursos<br><span class="percentage-input" style="background:none;border:none;color:#22c55e">15%</span></th>
+            <th style="background:rgba(96,165,250,0.3);color:#60a5fa">Coord. X</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <button class="btn btn-primary" onclick="agregarFila('tabla-internos')">+ Agregar Producto</button>
+      <button class="btn btn-secondary" onclick="editarPorcentajes('internos')">⚙️ Editar %</button>
+      <div class="coord-display">
+        <div>Total pesos internos: <span class="total-weight" id="total-internos">100%</span></div>
+        <div style="font-size:10px;color:#94a3b8;margin-top:4px">Las coordenadas X se calculan automáticamente: Σ(valor × peso)</div>
+      </div>
+    </div>
+
+    <!-- Factores Externos -->
+    <div class="section">
+      <h3>🌍 Factores Externos (Atractivo del Mercado)</h3>
+      <div class="column-controls">
+        <div class="column-input">
+          <input type="text" id="new-external-column" placeholder="Nombre del factor">
+          <input type="number" id="new-external-weight" placeholder="%" class="percentage-input" min="0" max="100" step="1">
+          <button class="btn btn-success" onclick="agregarColumna('externos')">+ Agregar</button>
+        </div>
+        <div style="font-size:11px;color:#94a3b8;">Los porcentajes representan la importancia relativa de cada factor</div>
+      </div>
+      <table id="tabla-externos">
+        <thead>
+          <tr>
+            <th style="width:120px">Producto/UEN</th>
+            <th data-column="tamano" data-weight="30">Tamaño Mercado<br><span class="percentage-input" style="background:none;border:none;color:#22c55e">30%</span></th>
+            <th data-column="crecimiento" data-weight="25">Crecimiento<br><span class="percentage-input" style="background:none;border:none;color:#22c55e">25%</span></th>
+            <th data-column="rentabilidad" data-weight="20">Rentabilidad<br><span class="percentage-input" style="background:none;border:none;color:#22c55e">20%</span></th>
+            <th data-column="competencia" data-weight="25">Competencia<br><span class="percentage-input" style="background:none;border:none;color:#22c55e">25%</span></th>
+            <th style="background:rgba(96,165,250,0.3);color:#60a5fa">Coord. Y</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <button class="btn btn-primary" onclick="agregarFila('tabla-externos')">+ Agregar Producto</button>
+      <button class="btn btn-secondary" onclick="editarPorcentajes('externos')">⚙️ Editar %</button>
+      <div class="coord-display">
+        <div>Total pesos externos: <span class="total-weight" id="total-externos">100%</span></div>
+        <div style="font-size:10px;color:#94a3b8;margin-top:4px">Las coordenadas Y se calculan automáticamente: Σ(valor × peso)</div>
+      </div>
+    </div>
+
+    <!-- Participación / Ventas -->
+    <div class="section">
+      <h3>📊 Participación / Ventas</h3>
+      <table id="tabla-ventas">
+        <thead>
+          <tr>
+            <th style="width:120px">Producto/UEN</th>
+            <th>Ventas ($)</th>
+            <th>% Participación</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <button class="btn btn-primary" onclick="agregarFila('tabla-ventas')">+ Agregar Producto</button>
+    </div>
+
+    <button class="btn btn-primary" onclick="renderMatriz()" style="width:100%;padding:12px;font-size:14px;margin-top:10px">🔄 Actualizar Matriz</button>
+  </div>
+
+  <div class="card">
+    <div class="canvas">
+      <svg id="svg"></svg>
+    </div>
+    <div style="margin-top:15px;font-size:11px;color:#94a3b8;text-align:center">
+      <div><strong>Escala:</strong> 1 (Muy Bajo) → 5 (Muy Alto) | <strong>Eje X:</strong> Invertido (5 → 0)</div>
+      <div style="margin-top:5px">
+        <span style="color:#22c55e">🟢 Verde</span>: Invertir/Crecer | 
+        <span style="color:#f59e0b">🟡 Amarillo</span>: Selectividad | 
+        <span style="color:#ef4444">🔴 Rojo</span>: Cosechar/Retirar
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const svg = document.getElementById('svg');
+const WIDTH = 900, HEIGHT = 650, MARGIN = 80;
+const innerW = WIDTH - MARGIN * 2, innerH = HEIGHT - MARGIN * 2;
+
+// Configuración de colores mejorada
+const COLORS = {
+  invest: { bg: '#10b98150', border: '#10b981', label: 'Invertir/Crecer' },
+  selective: { bg: '#f59e0b50', border: '#f59e0b', label: 'Selectividad' },
+  harvest: { bg: '#ef444450', border: '#ef4444', label: 'Cosechar/Retirar' },
+  grid: '#374151',
+  text: '#e5e7eb',
+  axis: '#9ca3af'
+};
+
+function agregarColumna(tipo) {
+  const columnInput = document.getElementById(`new-${tipo === 'internos' ? 'internal' : 'external'}-column`);
+  const weightInput = document.getElementById(`new-${tipo === 'internos' ? 'internal' : 'external'}-weight`);
+  
+  const columnName = columnInput.value.trim();
+  const weight = parseInt(weightInput.value) || 0;
+  
+  if (!columnName || weight <= 0) {
+    alert('Por favor ingresa un nombre válido y un porcentaje mayor a 0');
+    return;
+  }
+  
+  const tabla = document.getElementById(`tabla-${tipo}`);
+  const thead = tabla.querySelector('thead tr');
+  const lastColumn = thead.children[thead.children.length - 1];
+  
+  // Crear nueva columna
+  const th = document.createElement('th');
+  th.setAttribute('data-column', columnName.toLowerCase().replace(/\s+/g, '_'));
+  th.setAttribute('data-weight', weight);
+  th.innerHTML = `${columnName}<br><span class="percentage-input" style="background:none;border:none;color:#22c55e">${weight}%</span>`;
+  
+  // Insertar antes de la columna de coordenadas
+  thead.insertBefore(th, lastColumn);
+  
+  // Agregar celda vacía en todas las filas existentes
+  const tbody = tabla.querySelector('tbody');
+  Array.from(tbody.children).forEach(row => {
+    const td = document.createElement('td');
+    td.innerHTML = '<input type="number" min="1" max="5" step="0.1">';
+    row.insertBefore(td, row.lastElementChild);
+  });
+  
+  // Limpiar inputs
+  columnInput.value = '';
+  weightInput.value = '';
+  
+  actualizarTotalPesos(tipo);
+}
+
+function agregarFila(tablaId) {
+  const tbody = document.querySelector(`#${tablaId} tbody`);
+  const thead = document.querySelector(`#${tablaId} thead tr`);
+  const columnas = thead.children.length;
+  
+  const tr = document.createElement('tr');
+  
+  for (let i = 0; i < columnas; i++) {
+    const td = document.createElement('td');
+    
+    if (i === 0) {
+      // Primera columna: nombre del producto con evento para sincronizar
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = 'Producto';
+      input.addEventListener('blur', function() {
+        sincronizarProducto(this.value, tablaId);
+      });
+      td.appendChild(input);
+    } else if (i === columnas - 1 && tablaId !== 'tabla-ventas') {
+      // Última columna en tablas de factores: coordenada calculada
+      td.innerHTML = '<span class="coord-result">0.00</span>';
+      td.style.background = 'rgba(96,165,250,0.1)';
+      td.style.color = '#60a5fa';
+      td.style.fontWeight = 'bold';
+    } else {
+      // Columnas intermedias: valores numéricos
+      if (tablaId === 'tabla-ventas') {
+        td.innerHTML = i === 1 ? 
+          '<input type="number" min="0" step="1000" placeholder="0">' : 
+          '<input type="number" min="0" max="100" step="0.1" placeholder="0">';
+      } else {
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.min = '1';
+        input.max = '5';
+        input.step = '0.1';
+        input.placeholder = '3';
+        input.addEventListener('input', () => calcularCoordenada(tr, tablaId));
+        td.appendChild(input);
+      }
+    }
+    
+    tr.appendChild(td);
+  }
+  
+  tbody.appendChild(tr);
+}
+
+function sincronizarProducto(nombreProducto, tablaOrigen) {
+  if (!nombreProducto.trim()) return;
+  
+  const tablas = ['tabla-internos', 'tabla-externos', 'tabla-ventas'];
+  
+  tablas.forEach(tablaId => {
+    if (tablaId === tablaOrigen) return;
+    
+    const tbody = document.querySelector(`#${tablaId} tbody`);
+    const filas = Array.from(tbody.children);
+    
+    // Verificar si ya existe una fila con este producto
+    const filaExistente = filas.find(fila => {
+      const input = fila.querySelector('input[type="text"]');
+      return input && input.value === nombreProducto;
+    });
+    
+    if (!filaExistente) {
+      // Agregar nueva fila
+      agregarFila(tablaId);
+      const nuevaFila = tbody.lastElementChild;
+      const inputNombre = nuevaFila.querySelector('input[type="text"]');
+      if (inputNombre) {
+        inputNombre.value = nombreProducto;
+      }
+    }
+  });
+}
+
+function calcularCoordenada(row, tablaId) {
+  const tipo = tablaId.replace('tabla-', '');
+  const thead = document.querySelector(`#${tablaId} thead tr`);
+  const inputs = row.querySelectorAll('input[type="number"]');
+  const coordSpan = row.querySelector('.coord-result');
+  
+  let suma = 0;
+  let pesoTotal = 0;
+  
+  inputs.forEach((input, index) => {
+    const valor = parseFloat(input.value) || 0;
+    const th = thead.children[index + 1]; // +1 porque saltamos la primera columna (nombre)
+    const peso = parseFloat(th.getAttribute('data-weight')) || 0;
+    
+    suma += valor * (peso / 100);
+    pesoTotal += peso;
+  });
+  
+  // Calcular la coordenada ponderada (ya está en escala 1-5)
+  const coordenada = suma;
+  
+  // Asegurar que esté entre 1 y 5
+  const coordenadaFinal = Math.max(1, Math.min(5, coordenada));
+  
+  if (coordSpan) {
+    coordSpan.textContent = coordenadaFinal.toFixed(2);
+  }
+}
+
+function actualizarTotalPesos(tipo) {
+  const tabla = document.getElementById(`tabla-${tipo}`);
+  const thead = tabla.querySelector('thead tr');
+  let total = 0;
+  
+  // Sumar todos los pesos excepto primera y última columna
+  for (let i = 1; i < thead.children.length - 1; i++) {
+    const peso = parseFloat(thead.children[i].getAttribute('data-weight')) || 0;
+    total += peso;
+  }
+  
+  document.getElementById(`total-${tipo}`).textContent = `${total}%`;
+  
+  // Colorear según si suma 100%
+  const elemento = document.getElementById(`total-${tipo}`);
+  if (total === 100) {
+    elemento.style.color = '#22c55e';
+  } else if (total > 100) {
+    elemento.style.color = '#ef4444';
+  } else {
+    elemento.style.color = '#f59e0b';
+  }
+}
+
+function editarPorcentajes(tipo) {
+  const tabla = document.getElementById(`tabla-${tipo}`);
+  const thead = tabla.querySelector('thead tr');
+  
+  // Crear modal simple para editar porcentajes
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center;
+    z-index: 1000;
+  `;
+  
+  const content = document.createElement('div');
+  content.style.cssText = `
+    background: #1e293b; padding: 25px; border-radius: 12px; max-width: 400px; width: 90%;
+    border: 1px solid rgba(96,165,250,0.3);
+  `;
+  
+  let html = `<h3 style="color: #60a5fa; margin-top: 0;">Editar Porcentajes - ${tipo === 'internos' ? 'Factores Internos' : 'Factores Externos'}</h3>`;
+  
+  // Crear inputs para cada columna (excepto primera y última)
+  for (let i = 1; i < thead.children.length - 1; i++) {
+    const th = thead.children[i];
+    const columnName = th.textContent.split('\n')[0];
+    const currentWeight = th.getAttribute('data-weight') || 0;
+    
+    html += `
+      <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+        <label style="flex: 1; color: #e5e7eb;">${columnName}:</label>
+        <input type="number" data-column-index="${i}" value="${currentWeight}" 
+               min="0" max="100" step="1" style="width: 60px; text-align: center;
+               background: rgba(30,41,59,0.8); border: 1px solid rgba(96,165,250,0.3); 
+               border-radius: 4px; color: #fff; padding: 4px;">
+        <span style="color: #94a3b8;">%</span>
+        <button onclick="eliminarColumna(${i}, '${tipo}')" class="btn btn-danger" style="padding: 4px 8px; font-size: 10px;">❌</button>
+      </div>
+    `;
+  }
+  
+  html += `
+    <div style="margin-top: 20px; text-align: center;">
+      <button onclick="guardarPorcentajes('${tipo}')" class="btn btn-success">Guardar</button>
+      <button onclick="cerrarModal()" class="btn btn-secondary" style="margin-left: 10px;">Cancelar</button>
+    </div>
+  `;
+  
+  content.innerHTML = html;
+  modal.appendChild(content);
+  document.body.appendChild(modal);
+  
+  // Función para cerrar modal
+  window.cerrarModal = () => modal.remove();
+  
+  // Función para guardar porcentajes
+  window.guardarPorcentajes = (tipo) => {
+    const inputs = content.querySelectorAll('input[type="number"]');
+    inputs.forEach(input => {
+      const columnIndex = parseInt(input.getAttribute('data-column-index'));
+      const newWeight = parseInt(input.value) || 0;
+      const th = thead.children[columnIndex];
+      
+      th.setAttribute('data-weight', newWeight);
+      const span = th.querySelector('.percentage-input, span');
+      if (span) span.textContent = `${newWeight}%`;
+    });
+    
+    actualizarTotalPesos(tipo);
+    modal.remove();
+    
+    // Recalcular todas las coordenadas
+    const tbody = tabla.querySelector('tbody');
+    Array.from(tbody.children).forEach(row => calcularCoordenada(row, `tabla-${tipo}`));
+  };
+}
+
+function eliminarColumna(columnIndex, tipo) {
+  if (!confirm('¿Estás seguro de que quieres eliminar esta columna?')) return;
+  
+  const tabla = document.getElementById(`tabla-${tipo}`);
+  const thead = tabla.querySelector('thead tr');
+  const tbody = tabla.querySelector('tbody');
+  
+  // Eliminar header
+  thead.children[columnIndex].remove();
+  
+  // Eliminar celdas en todas las filas
+  Array.from(tbody.children).forEach(row => {
+    if (row.children[columnIndex]) {
+      row.children[columnIndex].remove();
+    }
+  });
+  
+  actualizarTotalPesos(tipo);
+  cerrarModal();
+}
+
+// Funciones de conversión de coordenadas (X invertido: 5→0)
+function scoreToPosX(score) {
+  // Invertir el score: 5 -> 0, 4 -> 1, 3 -> 2, 2 -> 3, 1 -> 4
+  const invertedScore = 6 - score;
+  const t = Math.max(0, Math.min(1, (invertedScore - 1) / 4)); // Normalizar a 0-1
+  return MARGIN + t * innerW;
+}
+
+function scoreToPosY(score) {
+  const t = Math.max(0, Math.min(1, (score - 1) / 4)); // Normalizar a 0-1
+  return MARGIN + (1 - t) * innerH; // Invertir Y (mayor score = más arriba)
+}
+
+function drawGrid() {
+  svg.setAttribute('viewBox', `0 0 ${WIDTH} ${HEIGHT}`);
+  svg.innerHTML = '';
+  
+  // Coordenadas de división de regiones (3x3)
+  const x1 = MARGIN + innerW / 3;
+  const x2 = MARGIN + 2 * innerW / 3;
+  const y1 = MARGIN + innerH / 3;
+  const y2 = MARGIN + 2 * innerH / 3;
+  
+  // Regiones de la matriz con colores mejorados y distribución correcta
+  const regions = [
+    // Fila superior (Y = 3.33-5): Alto atractivo
+    [COLORS.invest.bg, MARGIN, MARGIN, innerW/3, innerH/3, 'Invertir\nProteger'],
+    [COLORS.invest.bg, x1, MARGIN, innerW/3, innerH/3, 'Invertir\nCrecer'],
+    [COLORS.selective.bg, x2, MARGIN, innerW/3, innerH/3, 'Selectivo\nCrecer'],
+    
+    // Fila media (Y = 1.67-3.33): Medio atractivo
+    [COLORS.invest.bg, MARGIN, y1, innerW/3, innerH/3, 'Invertir\nCrecer'],
+    [COLORS.selective.bg, x1, y1, innerW/3, innerH/3, 'Selectividad\nGanancias'],
+    [COLORS.selective.bg, x2, y1, innerW/3, innerH/3, 'Selectividad\nPrueba'],
+    
+    // Fila inferior (Y = 1-1.67): Bajo atractivo
+    [COLORS.selective.bg, MARGIN, y2, innerW/3, innerH/3, 'Selectividad\nPrueba'],
+    [COLORS.harvest.bg, x1, y2, innerW/3, innerH/3, 'Cosechar\nDesinvertir'],
+    [COLORS.harvest.bg, x2, y2, innerW/3, innerH/3, 'Desinvertir\nRetirar']
+  ];
+  
+  // Dibujar regiones
+  regions.forEach(([color, x, y, width, height, label]) => {
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('x', x);
+    rect.setAttribute('y', y);
+    rect.setAttribute('width', width);
+    rect.setAttribute('height', height);
+    rect.setAttribute('fill', color);
+    rect.setAttribute('stroke', COLORS.grid);
+    rect.setAttribute('stroke-width', '1');
+    svg.appendChild(rect);
+    
+    // Agregar etiqueta de la región (texto centrado)
+    const lines = label.split('\n');
+    lines.forEach((line, index) => {
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', x + width/2);
+      text.setAttribute('y', y + height/2 + (index - 0.5) * 12);
+      text.setAttribute('text-anchor', 'middle');
+      text.setAttribute('dominant-baseline', 'middle');
+      text.setAttribute('fill', COLORS.text);
+      text.setAttribute('font-size', '10');
+      text.setAttribute('font-weight', 'bold');
+      text.setAttribute('opacity', '0.8');
+      text.textContent = line;
+      svg.appendChild(text);
+    });
+  });
+  
+  // Líneas de cuadrícula principales (divisiones 3x3)
+  const gridLines = [
+    { x1: x1, y1: MARGIN, x2: x1, y2: MARGIN + innerH }, // Vertical 1
+    { x1: x2, y1: MARGIN, x2: x2, y2: MARGIN + innerH }, // Vertical 2
+    { x1: MARGIN, y1: y1, x2: MARGIN + innerW, y2: y1 }, // Horizontal 1
+    { x1: MARGIN, y1: y2, x2: MARGIN + innerW, y2: y2 }  // Horizontal 2
+  ];
+  
+  gridLines.forEach(line => {
+    const gridLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    gridLine.setAttribute('x1', line.x1);
+    gridLine.setAttribute('y1', line.y1);
+    gridLine.setAttribute('x2', line.x2);
+    gridLine.setAttribute('y2', line.y2);
+    gridLine.setAttribute('stroke', COLORS.grid);
+    gridLine.setAttribute('stroke-width', '2');
+    svg.appendChild(gridLine);
+  });
+  
+  // Bordes del marco principal
+  const border = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  border.setAttribute('x', MARGIN);
+  border.setAttribute('y', MARGIN);
+  border.setAttribute('width', innerW);
+  border.setAttribute('height', innerH);
+  border.setAttribute('fill', 'none');
+  border.setAttribute('stroke', COLORS.text);
+  border.setAttribute('stroke-width', '2');
+  svg.appendChild(border);
+  
+  // Etiquetas de los ejes con valores invertidos para X
+  for (let i = 1; i <= 5; i++) {
+    // Eje X (invertido: 5, 4, 3, 2, 1)
+    const xLabel = 6 - i; // Invertir los números para mostrar 5,4,3,2,1
+    const x = MARGIN + ((i - 1) / 4) * innerW;
+    
+    const xText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    xText.setAttribute('x', x);
+    xText.setAttribute('y', HEIGHT - MARGIN + 30);
+    xText.setAttribute('text-anchor', 'middle');
+    xText.setAttribute('fill', COLORS.axis);
+    xText.setAttribute('font-size', '14');
+    xText.setAttribute('font-weight', 'bold');
+    xText.textContent = xLabel;
+    svg.appendChild(xText);
+    
+    // Eje Y (normal: 1, 2, 3, 4, 5)
+    const y = MARGIN + ((5 - i) / 4) * innerH;
+    const yText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    yText.setAttribute('x', MARGIN - 30);
+    yText.setAttribute('y', y + 5);
+    yText.setAttribute('text-anchor', 'middle');
+    yText.setAttribute('fill', COLORS.axis);
+    yText.setAttribute('font-size', '14');
+    yText.setAttribute('font-weight', 'bold');
+    yText.textContent = i;
+    svg.appendChild(yText);
+  }
+  
+  // Títulos de los ejes
+  const xTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  xTitle.setAttribute('x', WIDTH / 2);
+  xTitle.setAttribute('y', HEIGHT - 15);
+  xTitle.setAttribute('text-anchor', 'middle');
+  xTitle.setAttribute('fill', COLORS.text);
+  xTitle.setAttribute('font-size', '14');
+  xTitle.setAttribute('font-weight', 'bold');
+  xTitle.textContent = 'Fortalezas de la Organización (Factores Internos) →';
+  svg.appendChild(xTitle);
+  
+  const yTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  yTitle.setAttribute('x', 25);
+  yTitle.setAttribute('y', HEIGHT / 2);
+  yTitle.setAttribute('text-anchor', 'middle');
+  yTitle.setAttribute('fill', COLORS.text);
+  yTitle.setAttribute('font-size', '14');
+  yTitle.setAttribute('font-weight', 'bold');
+  yTitle.setAttribute('transform', `rotate(-90 25 ${HEIGHT / 2})`);
+  yTitle.textContent = '← Atractivo del Mercado (Factores Externos)';
+  svg.appendChild(yTitle);
+}
+
+function renderMatriz() {
+  drawGrid();
+  
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  g.setAttribute('id', 'bubbles');
+  svg.appendChild(g);
+  
+  const internos = leerTablaConCoordenadas('tabla-internos');
+  const externos = leerTablaConCoordenadas('tabla-externos');
+  const ventas = leerTabla('tabla-ventas');
+  
+  console.log('Datos internos:', internos);
+  console.log('Datos externos:', externos);
+  console.log('Datos ventas:', ventas);
+  
+  // Calcular el tamaño máximo para normalizar las burbujas
+  const ventasValores = ventas.map(v => parseFloat(v[1]) || 0).filter(v => v > 0);
+  const maxVentas = Math.max(...ventasValores, 1);
+  
+  internos.forEach((intRow, index) => {
+    const nombreProducto = intRow[0];
+    if (!nombreProducto || nombreProducto.trim() === '') return;
+    
+    const extRow = externos.find(r => r[0] === nombreProducto);
+    const ventRow = ventas.find(r => r[0] === nombreProducto);
+    
+    if (!extRow || !ventRow) {
+      console.warn(`No se encontraron datos completos para ${nombreProducto}`);
+      return;
+    }
+    
+    // Obtener coordenadas calculadas (última columna)
+    const x = parseFloat(intRow[intRow.length - 1]) || 2.5;
+    const y = parseFloat(extRow[extRow.length - 1]) || 2.5;
+    
+    console.log(`${nombreProducto}: X=${x}, Y=${y}`);
+    
+    // Validar que las coordenadas estén en el rango 1-5
+    const xFinal = Math.max(1, Math.min(5, x));
+    const yFinal = Math.max(1, Math.min(5, y));
+    
+    const cx = scoreToPosX(xFinal);
+    const cy = scoreToPosY(yFinal);
+    
+    // Tamaño de burbuja proporcional a las ventas
+    const ventas_valor = parseFloat(ventRow[1]) || 0;
+    const participacion = parseFloat(ventRow[2]) || 0;
+    const r = Math.max(15, Math.min(60, Math.sqrt(ventas_valor / maxVentas) * 50 + 15));
+    
+    // Color basado en la región de la matriz
+    let color = COLORS.selective.border;
+    if (xFinal >= 3.33 && yFinal >= 3.33) {
+      color = COLORS.invest.border;
+    } else if (xFinal <= 2.67 && yFinal <= 2.67) {
+      color = COLORS.harvest.border;
+    }
+    
+    // Burbuja principal con gradiente
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', cx);
+    circle.setAttribute('cy', cy);
+    circle.setAttribute('r', r);
+    circle.setAttribute('fill', color + '20');
+    circle.setAttribute('stroke', color);
+    circle.setAttribute('stroke-width', '3');
+    circle.setAttribute('opacity', '0.9');
+    g.appendChild(circle);
+    
+    // Círculo interno para dar profundidad
+    const innerCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    innerCircle.setAttribute('cx', cx);
+    innerCircle.setAttribute('cy', cy);
+    innerCircle.setAttribute('r', r * 0.7);
+    innerCircle.setAttribute('fill', color + '15');
+    innerCircle.setAttribute('stroke', 'none');
+    g.appendChild(innerCircle);
+    
+    // Sector de participación (si hay participación)
+    if (participacion > 0) {
+      const arc = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      const startAngle = -Math.PI / 2;
+      const endAngle = startAngle + 2 * Math.PI * (participacion / 100);
+      
+      const x1 = cx + r * Math.cos(startAngle);
+      const y1 = cy + r * Math.sin(startAngle);
+      const x2 = cx + r * Math.cos(endAngle);
+      const y2 = cy + r * Math.sin(endAngle);
+      
+      const largeArc = participacion > 50 ? 1 : 0;
+      const d = `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+      
+      arc.setAttribute('d', d);
+      arc.setAttribute('fill', '#60a5fa');
+      arc.setAttribute('opacity', '0.7');
+      g.appendChild(arc);
+    }
+    
+    // Etiqueta del producto (arriba de la burbuja)
+    const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    label.setAttribute('x', cx);
+    label.setAttribute('y', cy - r - 8);
+    label.setAttribute('text-anchor', 'middle');
+    label.setAttribute('fill', COLORS.text);
+    label.setAttribute('font-size', '13');
+    label.setAttribute('font-weight', 'bold');
+    label.setAttribute('text-shadow', '1px 1px 2px rgba(0,0,0,0.8)');
+    label.textContent = nombreProducto;
+    g.appendChild(label);
+    
+    // Información de coordenadas (debajo de la burbuja)
+    const coordInfo = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    coordInfo.setAttribute('x', cx);
+    coordInfo.setAttribute('y', cy + r + 18);
+    coordInfo.setAttribute('text-anchor', 'middle');
+    coordInfo.setAttribute('fill', COLORS.axis);
+    coordInfo.setAttribute('font-size', '11');
+    coordInfo.setAttribute('font-weight', '500');
+    coordInfo.textContent = `(${xFinal.toFixed(1)}, ${yFinal.toFixed(1)})`;
+    g.appendChild(coordInfo);
+    
+    // Información de participación (debajo de coordenadas)
+    if (participacion > 0) {
+      const partInfo = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      partInfo.setAttribute('x', cx);
+      partInfo.setAttribute('y', cy + r + 32);
+      partInfo.setAttribute('text-anchor', 'middle');
+      partInfo.setAttribute('fill', '#60a5fa');
+      partInfo.setAttribute('font-size', '10');
+      partInfo.setAttribute('font-weight', 'bold');
+      partInfo.textContent = `${participacion}% participación`;
+      g.appendChild(partInfo);
+    }
+    
+    // Punto central para facilitar ubicación
+    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    dot.setAttribute('cx', cx);
+    dot.setAttribute('cy', cy);
+    dot.setAttribute('r', '4');
+    dot.setAttribute('fill', color);
+    dot.setAttribute('stroke', '#fff');
+    dot.setAttribute('stroke-width', '1');
+    g.appendChild(dot);
+  });
+  
+  // Agregar leyenda
+  agregarLeyenda(g);
+}
+
+function agregarLeyenda(g) {
+  const legendX = WIDTH - 200;
+  const legendY = 50;
+  
+  // Fondo de la leyenda
+  const legendBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  legendBg.setAttribute('x', legendX - 10);
+  legendBg.setAttribute('y', legendY - 10);
+  legendBg.setAttribute('width', 180);
+  legendBg.setAttribute('height', 120);
+  legendBg.setAttribute('fill', 'rgba(0,0,0,0.8)');
+  legendBg.setAttribute('stroke', COLORS.grid);
+  legendBg.setAttribute('rx', '8');
+  g.appendChild(legendBg);
+  
+  // Título de leyenda
+  const legendTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  legendTitle.setAttribute('x', legendX + 80);
+  legendTitle.setAttribute('y', legendY + 10);
+  legendTitle.setAttribute('text-anchor', 'middle');
+  legendTitle.setAttribute('fill', COLORS.text);
+  legendTitle.setAttribute('font-size', '12');
+  legendTitle.setAttribute('font-weight', 'bold');
+  legendTitle.textContent = 'Estrategias';
+  g.appendChild(legendTitle);
+  
+  // Items de leyenda
+  const legendItems = [
+    { color: COLORS.invest.border, label: 'Invertir/Crecer' },
+    { color: COLORS.selective.border, label: 'Selectividad' },
+    { color: COLORS.harvest.border, label: 'Cosechar/Retirar' }
+  ];
+  
+  legendItems.forEach((item, index) => {
+    const y = legendY + 30 + index * 20;
+    
+    // Círculo de color
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', legendX + 10);
+    circle.setAttribute('cy', y);
+    circle.setAttribute('r', '6');
+    circle.setAttribute('fill', item.color + '40');
+    circle.setAttribute('stroke', item.color);
+    circle.setAttribute('stroke-width', '2');
+    g.appendChild(circle);
+    
+    // Texto
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', legendX + 25);
+    text.setAttribute('y', y + 4);
+    text.setAttribute('fill', COLORS.text);
+    text.setAttribute('font-size', '11');
+    text.textContent = item.label;
+    g.appendChild(text);
+  });
+}
+
+function leerTablaConCoordenadas(id) {
+  const rows = [...document.querySelectorAll(`#${id} tbody tr`)];
+  return rows.map(r => {
+    const cells = [...r.querySelectorAll('input, .coord-result')];
+    return cells.map(cell => {
+      if (cell.tagName === 'INPUT') {
+        return cell.value;
+      } else {
+        return cell.textContent;
+      }
+    });
+  }).filter(row => row[0]); // Filtrar filas vacías
+}
+
+function leerTabla(id) {
+  const rows = [...document.querySelectorAll(`#${id} tbody tr`)];
+  return rows.map(r => [...r.querySelectorAll('input')].map(inp => inp.value))
+    .filter(row => row[0]); // Filtrar filas vacías
+}
+
+// Inicializar
+drawGrid();
+actualizarTotalPesos('internos');
+actualizarTotalPesos('externos');
+
+// Función para inicializar datos de ejemplo
+function inicializarDatosEjemplo() {
+  // Agregar productos de ejemplo
+  const productosEjemplo = [
+    { nombre: 'Producto A', internos: [4, 3, 4, 3, 4], externos: [4, 4, 3, 3], ventas: [500000, 25] },
+  ];
+  
+  productosEjemplo.forEach(producto => {
+    // Agregar a tabla internos
+    agregarFila('tabla-internos');
+    const filaInternos = document.querySelector('#tabla-internos tbody tr:last-child');
+    const inputsInternos = filaInternos.querySelectorAll('input');
+    inputsInternos[0].value = producto.nombre;
+    producto.internos.forEach((valor, index) => {
+      if (inputsInternos[index + 1]) {
+        inputsInternos[index + 1].value = valor;
+      }
+    });
+    calcularCoordenada(filaInternos, 'tabla-internos');
+    
+    // Agregar a tabla externos
+    agregarFila('tabla-externos');
+    const filaExternos = document.querySelector('#tabla-externos tbody tr:last-child');
+    const inputsExternos = filaExternos.querySelectorAll('input');
+    inputsExternos[0].value = producto.nombre;
+    producto.externos.forEach((valor, index) => {
+      if (inputsExternos[index + 1]) {
+        inputsExternos[index + 1].value = valor;
+      }
+    });
+    calcularCoordenada(filaExternos, 'tabla-externos');
+    
+    // Agregar a tabla ventas
+    agregarFila('tabla-ventas');
+    const filaVentas = document.querySelector('#tabla-ventas tbody tr:last-child');
+    const inputsVentas = filaVentas.querySelectorAll('input');
+    inputsVentas[0].value = producto.nombre;
+    inputsVentas[1].value = producto.ventas[0];
+    inputsVentas[2].value = producto.ventas[1];
+  });
+}
+
+// Inicializar después de un breve delay para asegurar que el DOM esté listo
+setTimeout(() => {
+  inicializarDatosEjemplo();
+  setTimeout(() => renderMatriz(), 100);
+}, 200);
+</script>
+<svg style="height:0;position:absolute">
+  <defs>
+    <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,8 L8,4 z" fill="#60a5fa" />
+    </marker>
+  </defs>
+</svg>
+</body>
+</html>
