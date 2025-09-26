@@ -1,883 +1,297 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="light" style=""><head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matriz GE-McKinsey Dinámica - Carvajal S.A.</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
-    <style>
-        body {
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 20px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            border-top: 4px solid #2c5aa0;
-        }
-
-        .header h1 {
-            color: #2c5aa0;
-            margin: 0;
-            font-size: 28px;
-            font-weight: 700;
-        }
-
-        .header .subtitle {
-            color: #666;
-            font-size: 14px;
-            margin-top: 10px;
-        }
-
-        .container {
-            display: grid;
-            grid-template-columns: 400px 1fr;
-            gap: 20px;
-            height: 800px;
-        }
-
-        .control-panel {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            overflow-y: auto;
-        }
-
-        .matrix-container {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            position: relative;
-        }
-
-        .section {
-            margin-bottom: 25px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 15px;
-        }
-
-        .section h3 {
-            color: #2c5aa0;
-            margin: 0 0 15px 0;
-            font-size: 16px;
-            border-bottom: 2px solid #2c5aa0;
-            padding-bottom: 5px;
-        }
-
-        .product-item {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 6px;
-            padding: 10px;
-            margin-bottom: 10px;
-            font-size: 12px;
-        }
-
-        .product-name {
-            font-weight: bold;
-            color: #2c5aa0;
-            margin-bottom: 5px;
-        }
-
-        .product-details {
-            color: #666;
-            line-height: 1.4;
-        }
-
-        .controls {
-            margin-bottom: 20px;
-        }
-
-        .btn {
-            background: #2c5aa0;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            margin: 2px;
-            transition: background-color 0.2s;
-        }
-
-        .btn:hover {
-            background: #1e3f73;
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-        }
-
-        .btn-secondary:hover {
-            background: #545b62;
-        }
-
-        .year-filter {
-            display: flex;
-            gap: 5px;
-            margin: 10px 0;
-        }
-
-        .year-btn {
-            padding: 4px 8px;
-            font-size: 11px;
-            border: 1px solid #2c5aa0;
-            background: white;
-            color: #2c5aa0;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-
-        .year-btn.active {
-            background: #2c5aa0;
-            color: white;
-        }
-
-        .legend {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 6px;
-            padding: 10px;
-            margin-bottom: 15px;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
-            font-size: 11px;
-        }
-
-        .legend-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
-
-        #matrix-svg {
-            width: 100%;
-            height: 700px;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
-
-        .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 20px;
-            border-radius: 10px;
-            width: 500px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #2c5aa0;
-            padding-bottom: 10px;
-        }
-
-        .close {
-            color: #666;
-            font-size: 24px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .close:hover {
-            color: #2c5aa0;
-        }
-
-        .projection-form {
-            display: grid;
-            gap: 15px;
-        }
-
-        .form-group {
-            display: grid;
-            grid-template-columns: 80px 1fr 1fr;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .form-group label {
-            font-weight: bold;
-            color: #2c5aa0;
-        }
-
-        .form-group input {
-            padding: 6px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            font-size: 12px;
-        }
-
-        .summary-stats {
-            background: #e8f4fd;
-            border: 1px solid #2c5aa0;
-            border-radius: 6px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-
-        .stat-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-            font-size: 12px;
-        }
-
-        .stat-label {
-            font-weight: bold;
-            color: #2c5aa0;
-        }
-    </style>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matriz GE-McKinsey Dinámica - Editor Universal</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body style="">
-    <div class="header">
-        <h1>🏢 Matriz GE-McKinsey Dinámica - Carvajal S.A.</h1>
-        <div class="subtitle">Análisis Estratégico del Portfolio Tecnológico • Versión 2024-2027</div>
+<body>
+  <div class="header">
+    <div class="editable-title">
+      <h1 id="main-title" onclick="editTitle('main-title')">🏢 Matriz GE-McKinsey Dinámica - Carvajal S.A.</h1>
+      <input type="text" id="main-title-edit" class="title-edit" onblur="saveTitle('main-title')" onkeypress="saveTitleOnEnter(event, 'main-title')">
+    </div>
+    <div class="editable-title">
+      <div class="subtitle" id="subtitle" onclick="editTitle('subtitle')">Análisis Estratégico del Portfolio Tecnológico • Versión 2024-2027</div>
+      <input type="text" id="subtitle-edit" class="title-edit" onblur="saveTitle('subtitle')" onkeypress="saveTitleOnEnter(event, 'subtitle')">
+    </div>
+  </div>
+
+  <div class="main-container">
+    <div class="control-panel">
+      <!-- Factores Internos -->
+      <div class="section">
+        <h3>🏢 Factores Internos (Fortalezas)</h3>
+        <table id="internal-factors">
+          <thead>
+            <tr>
+              <th>Factor</th>
+              <th>Peso (%)</th>
+              <th><button class="btn btn-success" onclick="addInternalFactor()">+ Factor</button></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="text" value="Liderazgo Tecnológico" onchange="updateMatrix()"></td>
+              <td><input type="number" class="factor-weight" value="25" min="1" max="100" onchange="updateWeights('internal')"></td>
+              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
+            </tr>
+            <tr>
+              <td><input type="text" value="Disponibilidad Plataformas" onchange="updateMatrix()"></td>
+              <td><input type="number" class="factor-weight" value="20" min="1" max="100" onchange="updateWeights('internal')"></td>
+              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
+            </tr>
+            <tr>
+              <td><input type="text" value="Base de Clientes B2B" onchange="updateMatrix()"></td>
+              <td><input type="number" class="factor-weight" value="20" min="1" max="100" onchange="updateWeights('internal')"></td>
+              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
+            </tr>
+            <tr>
+              <td><input type="text" value="Experiencia Regional" onchange="updateMatrix()"></td>
+              <td><input type="number" class="factor-weight" value="15" min="1" max="100" onchange="updateWeights('internal')"></td>
+              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
+            </tr>
+            <tr>
+              <td><input type="text" value="Capacidad de Innovación" onchange="updateMatrix()"></td>
+              <td><input type="number" class="factor-weight" value="20" min="1" max="100" onchange="updateWeights('internal')"></td>
+              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Total Peso:</th>
+              <th id="internal-total" style="color: #28a745;">100%</th>
+              <th></th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Factores Externos -->
+      <div class="section">
+        <h3>🌍 Factores Externos (Atractivo)</h3>
+        <table id="external-factors">
+          <thead>
+            <tr>
+              <th>Factor</th>
+              <th>Peso (%)</th>
+              <th><button class="btn btn-success" onclick="addExternalFactor()">+ Factor</button></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="text" value="Transformación Digital" onchange="updateMatrix()"></td>
+              <td><input type="number" class="factor-weight" value="30" min="1" max="100" onchange="updateWeights('external')"></td>
+              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
+            </tr>
+            <tr>
+              <td><input type="text" value="Crecimiento Fintech" onchange="updateMatrix()"></td>
+              <td><input type="number" class="factor-weight" value="25" min="1" max="100" onchange="updateWeights('external')"></td>
+              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
+            </tr>
+            <tr>
+              <td><input type="text" value="Regulaciones Favorables" onchange="updateMatrix()"></td>
+              <td><input type="number" class="factor-weight" value="20" min="1" max="100" onchange="updateWeights('external')"></td>
+              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
+            </tr>
+            <tr>
+              <td><input type="text" value="Demanda B2B Colombia" onchange="updateMatrix()"></td>
+              <td><input type="number" class="factor-weight" value="25" min="1" max="100" onchange="updateWeights('external')"></td>
+              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Total Peso:</th>
+              <th id="external-total" style="color: #28a745;">100%</th>
+              <th></th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Productos/UEN -->
+      <div class="section">
+        <h3>📊 Productos/Unidades de Negocio</h3>
+        <button class="btn btn-success" onclick="addProduct()" style="margin-bottom: 10px;">+ Agregar Producto</button>
+        <div id="products-container" style="max-height: 200px; overflow-y: auto;">
+          <!-- Los productos se cargarán dinámicamente -->
+        </div>
+      </div>
+
+      <!-- Fechas Personalizables -->
+      <div class="section">
+        <h3>📅 Fechas de Análisis</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Período</th>
+              <th>Fecha</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="dates-table">
+            <tr>
+              <td><input type="text" value="Actual" onchange="updateDateLabels()"></td>
+              <td><input type="date" value="2024-01-01" onchange="updateDateLabels()"></td>
+              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
+            </tr>
+            <tr>
+              <td><input type="text" value="Año 1" onchange="updateDateLabels()"></td>
+              <td><input type="date" value="2025-01-01" onchange="updateDateLabels()"></td>
+              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
+            </tr>
+            <tr>
+              <td><input type="text" value="Año 2" onchange="updateDateLabels()"></td>
+              <td><input type="date" value="2026-01-01" onchange="updateDateLabels()"></td>
+              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
+            </tr>
+            <tr>
+              <td><input type="text" value="Año 3" onchange="updateDateLabels()"></td>
+              <td><input type="date" value="2027-01-01" onchange="updateDateLabels()"></td>
+              <td><button class="btn btn-danger" onclick="removeRow(this)">🗑️</button></td>
+            </tr>
+          </tbody>
+        </table>
+        <button class="btn btn-success" onclick="addDatePeriod()">+ Agregar Fecha</button>
+      </div>
+
+      <!-- Controles -->
+      <div class="section">
+        <h3>🎛️ Controles</h3>
+        <div class="controls">
+          <button class="btn" onclick="showAllYears()">📊 Ver Todos</button>
+          <button class="btn btn-secondary" onclick="exportMatrix()">💾 Exportar</button>
+          <button class="btn" onclick="showProjectionModal()">⏭️ Proyecciones</button>
+          <button class="btn btn-secondary" onclick="animateMovements()">🎬 Animar</button>
+        </div>
+        <div class="year-filter" id="year-filter">
+          <!-- Los botones de filtro se generarán dinámicamente -->
+        </div>
+      </div>
+
+      <!-- Selector de Color -->
+      <div class="section">
+        <h3>🎨 Colores de Productos</h3>
+        <div class="color-picker-section">
+          <h4>Producto Seleccionado: <span id="selected-product-name">Ninguno</span></h4>
+          <div class="color-palette">
+            <div class="color-option" style="background: #10b981" data-color="#10b981" title="Verde - Invertir/Crecer"></div>
+            <div class="color-option" style="background: #f59e0b" data-color="#f59e0b" title="Amarillo - Selectividad"></div>
+            <div class="color-option" style="background: #ef4444" data-color="#ef4444" title="Rojo - Cosechar/Retirar"></div>
+            <div class="color-option" style="background: #3b82f6" data-color="#3b82f6" title="Azul"></div>
+            <div class="color-option" style="background: #8b5cf6" data-color="#8b5cf6" title="Púrpura"></div>
+            <div class="color-option" style="background: #06b6d4" data-color="#06b6d4" title="Cian"></div>
+            <div class="color-option" style="background: #f97316" data-color="#f97316" title="Naranja"></div>
+            <div class="color-option" style="background: #84cc16" data-color="#84cc16" title="Lima"></div>
+            <div class="color-option" style="background: #ec4899" data-color="#ec4899" title="Rosa"></div>
+            <div class="color-option" style="background: #6b7280" data-color="#6b7280" title="Gris"></div>
+          </div>
+          <div class="custom-color-input">
+            <label>Color personalizado:</label>
+            <input type="color" id="custom-color" value="#2c5aa0">
+            <button class="btn" onclick="applyCustomColor()">Aplicar</button>
+          </div>
+          <p style="font-size: 10px; color: #666; margin-top: 10px;">
+            💡 Haz clic en un producto de la matriz y luego selecciona un color para cambiarlo
+          </p>
+        </div>
+      </div>
+
+      <div class="legend">
+        <h4 style="margin-top: 0; color: #2c5aa0">🗝️ Leyenda</h4>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #10b981"></div>
+          <span>Invertir/Crecer</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #f59e0b"></div>
+          <span>Selectividad</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #ef4444"></div>
+          <span>Cosechar/Retirar</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #94a3b8; border: 2px dashed #666"></div>
+          <span>Proyección futura</span>
+        </div>
+      </div>
     </div>
 
-    <div class="container">
-        <div class="control-panel">
-            <div class="summary-stats">
-                <h4 style="margin-top:0;color:#2c5aa0;">📊 Dashboard Ejecutivo</h4>
-                <div class="stat-item">
-                    <span class="stat-label">Ingresos Totales:</span>
-                    <span>$400,645 M</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Unidades Estratégicas:</span>
-                    <span>7 productos</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Posición Promedio:</span>
-                    <span>Fuerte (3.7, 4.0)</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Productos en Zona Verde:</span>
-                    <span>5 de 7 (71%)</span>
-                </div>
-            </div>
-
-            <div class="section">
-                <h3>🎯 Productos/UEN Analizadas</h3>
-                <div class="product-item">
-                    <div class="product-name">Carvajal Tecnología y Servicios</div>
-                    <div class="product-details">
-                        Posición: (4.2, 4.1) • Ventas: $172,645M • Part: 35%<br>
-                        <span style="color:#10b981;">▲ Zona de Inversión/Crecimiento</span>
-                    </div>
-                </div>
-                <div class="product-item">
-                    <div class="product-name">Facturación Electrónica</div>
-                    <div class="product-details">
-                        Posición: (4.5, 4.3) • Ventas: $85,000M • Part: 20%<br>
-                        <span style="color:#10b981;">▲ Zona de Inversión/Protección</span>
-                    </div>
-                </div>
-                <div class="product-item">
-                    <div class="product-name">Plataforma GAIA</div>
-                    <div class="product-details">
-                        Posición: (4.0, 3.8) • Ventas: $45,000M • Part: 15%<br>
-                        <span style="color:#10b981;">▲ Zona de Inversión/Crecimiento</span>
-                    </div>
-                </div>
-                <div class="product-item">
-                    <div class="product-name">Fintech Álaga</div>
-                    <div class="product-details">
-                        Posición: (3.2, 4.0) • Ventas: $25,000M • Part: 8%<br>
-                        <span style="color:#f59e0b;">■ Zona de Selectividad</span>
-                    </div>
-                </div>
-                <div class="product-item">
-                    <div class="product-name">App PliP</div>
-                    <div class="product-details">
-                        Posición: (2.8, 3.5) • Ventas: $15,000M • Part: 5%<br>
-                        <span style="color:#f59e0b;">■ Zona de Selectividad</span>
-                    </div>
-                </div>
-                <div class="product-item">
-                    <div class="product-name">Servicios Cloud Oracle</div>
-                    <div class="product-details">
-                        Posición: (3.8, 4.2) • Ventas: $35,000M • Part: 12%<br>
-                        <span style="color:#10b981;">▲ Zona de Inversión/Crecimiento</span>
-                    </div>
-                </div>
-                <div class="product-item">
-                    <div class="product-name">Analítica de Datos</div>
-                    <div class="product-details">
-                        Posición: (3.5, 4.4) • Ventas: $18,000M • Part: 5%<br>
-                        <span style="color:#f59e0b;">■ Zona de Selectividad/Crecimiento</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="section">
-                <h3>📅 Controles Temporales</h3>
-                <div class="controls">
-                    <button class="btn" onclick="showAllYears()">📊 Ver Todos los Años</button>
-                    <button class="btn btn-secondary" onclick="exportMatrix()">💾 Exportar PNG</button>
-                </div>
-                <div class="year-filter">
-                    <button class="year-btn active" onclick="filterByYear('actual')" data-year="actual">Actual</button>
-                    <button class="year-btn" onclick="filterByYear('2025')" data-year="2025">2025</button>
-                    <button class="year-btn" onclick="filterByYear('2026')" data-year="2026">2026</button>
-                    <button class="year-btn" onclick="filterByYear('2027')" data-year="2027">2027</button>
-                </div>
-                <button class="btn" onclick="showProjectionModal()">⏭️ Editar Proyecciones</button>
-                <button class="btn btn-secondary" onclick="animateMovements()">🎬 Animar Transiciones</button>
-            </div>
-
-            <div class="legend">
-                <h4 style="margin-top:0;color:#2c5aa0;">🗝️ Leyenda</h4>
-                <div class="legend-item">
-                    <div class="legend-color" style="background:#10b981;"></div>
-                    <span>Invertir/Crecer - Posición fuerte, alta atracción</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background:#f59e0b;"></div>
-                    <span>Selectividad - Posición media, evaluar inversiones</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background:#ef4444;"></div>
-                    <span>Cosechar/Retirar - Posición débil, bajo atractivo</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background:#94a3b8; border: 2px dashed #666;"></div>
-                    <span>Proyección futura - Movimiento esperado</span>
-                </div>
-                <div class="legend-item">
-                    <div style="width:12px;height:2px;background:#666;margin-right:8px;border:1px dashed #666;"></div>
-                    <span>Línea de evolución temporal</span>
-                </div>
-            </div>
-
-            <div class="section">
-                <h3>⚠️ Alertas Estratégicas</h3>
-                <div style="font-size:12px;">
-                    <div style="color:#f59e0b;margin-bottom:5px;">⚡ App PliP: Requiere inversión o reposicionamiento</div>
-                    <div style="color:#10b981;margin-bottom:5px;">✅ Facturación Electrónica: Mantener liderazgo</div>
-                    <div style="color:#2c5aa0;margin-bottom:5px;">📈 Analítica de Datos: Alto potencial de crecimiento</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="matrix-container">
-            <svg id="matrix-svg" viewBox="0 0 800 700"><rect x="60" y="60" width="226.66666666666666" height="193.33333333333334" fill="#10b98130" stroke="#ddd" stroke-width="1"></rect><text x="173.33333333333331" y="156.66666666666669" text-anchor="middle" dominant-baseline="middle" fill="#666" font-size="10" font-weight="bold">Invertir/Proteger</text><rect x="286.66666666666663" y="60" width="226.66666666666666" height="193.33333333333334" fill="#10b98130" stroke="#ddd" stroke-width="1"></rect><text x="399.99999999999994" y="156.66666666666669" text-anchor="middle" dominant-baseline="middle" fill="#666" font-size="10" font-weight="bold">Invertir/Crecer</text><rect x="513.3333333333333" y="60" width="226.66666666666666" height="193.33333333333334" fill="#f59e0b30" stroke="#ddd" stroke-width="1"></rect><text x="626.6666666666666" y="156.66666666666669" text-anchor="middle" dominant-baseline="middle" fill="#666" font-size="10" font-weight="bold">Selectivo/Crecer</text><rect x="60" y="253.33333333333334" width="226.66666666666666" height="193.33333333333334" fill="#10b98130" stroke="#ddd" stroke-width="1"></rect><text x="173.33333333333331" y="350" text-anchor="middle" dominant-baseline="middle" fill="#666" font-size="10" font-weight="bold">Invertir/Crecer</text><rect x="286.66666666666663" y="253.33333333333334" width="226.66666666666666" height="193.33333333333334" fill="#f59e0b30" stroke="#ddd" stroke-width="1"></rect><text x="399.99999999999994" y="350" text-anchor="middle" dominant-baseline="middle" fill="#666" font-size="10" font-weight="bold">Selectividad/Ganancias</text><rect x="513.3333333333333" y="253.33333333333334" width="226.66666666666666" height="193.33333333333334" fill="#f59e0b30" stroke="#ddd" stroke-width="1"></rect><text x="626.6666666666666" y="350" text-anchor="middle" dominant-baseline="middle" fill="#666" font-size="10" font-weight="bold">Selectividad/Prueba</text><rect x="60" y="446.6666666666667" width="226.66666666666666" height="193.33333333333334" fill="#f59e0b30" stroke="#ddd" stroke-width="1"></rect><text x="173.33333333333331" y="543.3333333333334" text-anchor="middle" dominant-baseline="middle" fill="#666" font-size="10" font-weight="bold">Selectividad/Prueba</text><rect x="286.66666666666663" y="446.6666666666667" width="226.66666666666666" height="193.33333333333334" fill="#ef444430" stroke="#ddd" stroke-width="1"></rect><text x="399.99999999999994" y="543.3333333333334" text-anchor="middle" dominant-baseline="middle" fill="#666" font-size="10" font-weight="bold">Cosechar/Desinvertir</text><rect x="513.3333333333333" y="446.6666666666667" width="226.66666666666666" height="193.33333333333334" fill="#ef444430" stroke="#ddd" stroke-width="1"></rect><text x="626.6666666666666" y="543.3333333333334" text-anchor="middle" dominant-baseline="middle" fill="#666" font-size="10" font-weight="bold">Desinvertir/Retirar</text><line x1="286.66666666666663" y1="60" x2="286.66666666666663" y2="640" stroke="#666" stroke-width="2"></line><line x1="60" y1="253.33333333333334" x2="740" y2="253.33333333333334" stroke="#666" stroke-width="2"></line><line x1="513.3333333333333" y1="60" x2="513.3333333333333" y2="640" stroke="#666" stroke-width="2"></line><line x1="60" y1="446.6666666666667" x2="740" y2="446.6666666666667" stroke="#666" stroke-width="2"></line><rect x="60" y="60" width="680" height="580" fill="none" stroke="#333" stroke-width="3"></rect><text x="740" y="670" text-anchor="middle" fill="#333" font-weight="bold">1</text><text x="40" y="645" text-anchor="middle" fill="#333" font-weight="bold">1</text><text x="570" y="670" text-anchor="middle" fill="#333" font-weight="bold">2</text><text x="40" y="500" text-anchor="middle" fill="#333" font-weight="bold">2</text><text x="400" y="670" text-anchor="middle" fill="#333" font-weight="bold">3</text><text x="40" y="355" text-anchor="middle" fill="#333" font-weight="bold">3</text><text x="230" y="670" text-anchor="middle" fill="#333" font-weight="bold">4</text><text x="40" y="210" text-anchor="middle" fill="#333" font-weight="bold">4</text><text x="60" y="670" text-anchor="middle" fill="#333" font-weight="bold">5</text><text x="40" y="65" text-anchor="middle" fill="#333" font-weight="bold">5</text><text x="400" y="690" text-anchor="middle" fill="#2c5aa0" font-weight="bold" font-size="14">Fortalezas de la Organización →</text><text x="20" y="350" text-anchor="middle" fill="#2c5aa0" font-weight="bold" font-size="14" transform="rotate(-90 20 350)">← Atractivo del Mercado</text><g id="product-0"><circle cx="195.99999999999997" cy="190.50000000000006" r="40" fill="#10b98140" stroke="#10b981" stroke-width="3" class="product-circle"></circle><path d="M 195.99999999999997 190.50000000000006 L 195.99999999999997 150.50000000000006 A 40 40 0 0 1 228.36067977499786 214.011410091699 Z" fill="#2c5aa0" opacity="0.6"></path><text x="195.99999999999997" y="140.50000000000006" text-anchor="middle" fill="#333" font-size="10" font-weight="bold">Carvajal Tecnología y Servicios</text><text x="195.99999999999997" y="245.50000000000006" text-anchor="middle" fill="#666" font-size="9">(4.2, 4.1)</text></g><g id="product-1"><circle cx="145" cy="161.50000000000003" r="27.308494309131454" fill="#10b98140" stroke="#10b981" stroke-width="3" class="product-circle"></circle><path d="M 145 161.50000000000003 L 145 134.19150569086858 A 27.308494309131454 27.308494309131454 0 0 1 170.9719214629086 153.06121116768688 Z" fill="#2c5aa0" opacity="0.6"></path><text x="145" y="124.19150569086858" text-anchor="middle" fill="#333" font-size="10" font-weight="bold">Facturación Electrónica</text><text x="145" y="203.80849430913148" text-anchor="middle" fill="#666" font-size="9">(4.5, 4.3)</text></g><g id="product-2"><circle cx="230" cy="234.00000000000003" r="21.516261693069595" fill="#10b98140" stroke="#10b981" stroke-width="3" class="product-circle"></circle><path d="M 230 234.00000000000003 L 230 212.48373830693043 A 21.516261693069595 21.516261693069595 0 0 1 247.40702136511197 221.35305869234824 Z" fill="#2c5aa0" opacity="0.6"></path><text x="230" y="202.48373830693043" text-anchor="middle" fill="#333" font-size="10" font-weight="bold">Plataforma GAIA</text><text x="230" y="270.5162616930696" text-anchor="middle" fill="#666" font-size="9">(4, 3.8)</text></g><g id="product-3"><circle cx="365.99999999999994" cy="205" r="18.62014538503866" fill="#f59e0b40" stroke="#f59e0b" stroke-width="3" class="product-circle"></circle><path d="M 365.99999999999994 205 L 365.99999999999994 186.37985461496135 A 18.62014538503866 18.62014538503866 0 0 1 374.9703234515504 188.6830422157027 Z" fill="#2c5aa0" opacity="0.6"></path><text x="365.99999999999994" y="176.37985461496135" text-anchor="middle" fill="#333" font-size="10" font-weight="bold">Fintech Álaga</text><text x="365.99999999999994" y="238.62014538503865" text-anchor="middle" fill="#666" font-size="9">(3.2, 4)</text></g><g id="product-4"><circle cx="434.00000000000006" cy="277.5" r="17.1720872310232" fill="#f59e0b40" stroke="#f59e0b" stroke-width="3" class="product-circle"></circle><path d="M 434.00000000000006 277.5 L 434.00000000000006 260.32791276897683 A 17.1720872310232 17.1720872310232 0 0 1 439.30646678327525 261.1683745405466 Z" fill="#2c5aa0" opacity="0.6"></path><text x="434.00000000000006" y="250.32791276897683" text-anchor="middle" fill="#333" font-size="10" font-weight="bold">App PliP</text><text x="434.00000000000006" y="309.67208723102317" text-anchor="middle" fill="#666" font-size="9">(2.8, 3.5)</text></g><g id="product-5"><circle cx="264" cy="175.99999999999997" r="20.068203539054128" fill="#10b98140" stroke="#10b981" stroke-width="3" class="product-circle"></circle><path d="M 264 175.99999999999997 L 264 155.93179646094583 A 20.068203539054128 20.068203539054128 0 0 1 277.73763065384736 161.37090921132216 Z" fill="#2c5aa0" opacity="0.6"></path><text x="264" y="145.93179646094583" text-anchor="middle" fill="#333" font-size="10" font-weight="bold">Servicios Cloud Oracle</text><text x="264" y="211.0682035390541" text-anchor="middle" fill="#666" font-size="9">(3.8, 4.2)</text></g><g id="product-6"><circle cx="315" cy="146.99999999999994" r="17.60650467722784" fill="#10b98140" stroke="#10b981" stroke-width="3" class="product-circle"></circle><path d="M 315 146.99999999999994 L 315 129.3934953227721 A 17.60650467722784 17.60650467722784 0 0 1 320.4407091568054 130.2552189975413 Z" fill="#2c5aa0" opacity="0.6"></path><text x="315" y="119.39349532277211" text-anchor="middle" fill="#333" font-size="10" font-weight="bold">Analítica de Datos</text><text x="315" y="179.60650467722778" text-anchor="middle" fill="#666" font-size="9">(3.5, 4.4)</text></g></svg>
-        </div>
+    <div class="matrix-container">
+      <svg id="matrix-svg" viewBox="0 0 1000 600"></svg>
     </div>
+  </div>
 
-    <!-- Modal para editar proyecciones -->
-    <div id="projectionModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 style="margin:0;color:#2c5aa0;">⏭️ Editar Proyecciones Estratégicas</h3>
-                <span class="close" onclick="closeProjectionModal()">×</span>
-            </div>
-            <div id="projectionForm" class="projection-form">
-                <!-- Formulario dinámico para proyecciones -->
-            </div>
-            <div style="text-align:right;margin-top:20px;">
-                <button class="btn" onclick="saveProjections()">💾 Guardar Proyecciones</button>
-                <button class="btn btn-secondary" onclick="closeProjectionModal()">❌ Cancelar</button>
-            </div>
-        </div>
+  <!-- Tooltip -->
+  <div id="tooltip" class="tooltip"></div>
+
+  <!-- Modal -->
+  <div id="projectionModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="margin: 0; color: #2c5aa0">⏭️ Editar Proyecciones Estratégicas</h3>
+        <span class="close" onclick="closeProjectionModal()">×</span>
+      </div>
+      <div id="projectionForm" class="projection-form"></div>
+      <div style="text-align: right; margin-top: 20px">
+        <button class="btn" onclick="saveProjections()">💾 Guardar</button>
+        <button class="btn btn-secondary" onclick="closeProjectionModal()">❌ Cancelar</button>
+      </div>
     </div>
+  </div>
 
-    <script>
-        // Datos de los productos de Carvajal
-        const carvajalProducts = [
-            {
-                name: "Carvajal Tecnología y Servicios",
-                x: 4.2, y: 4.1, sales: 172645, share: 35,
-                projections: {
-                    2025: {x: 4.4, y: 4.2}, 2026: {x: 4.5, y: 4.3}, 2027: {x: 4.6, y: 4.4}
-                }
-            },
-            {
-                name: "Facturación Electrónica",
-                x: 4.5, y: 4.3, sales: 85000, share: 20,
-                projections: {
-                    2025: {x: 4.6, y: 4.4}, 2026: {x: 4.7, y: 4.5}, 2027: {x: 4.8, y: 4.6}
-                }
-            },
-            {
-                name: "Plataforma GAIA",
-                x: 4.0, y: 3.8, sales: 45000, share: 15,
-                projections: {
-                    2025: {x: 4.2, y: 4.0}, 2026: {x: 4.3, y: 4.1}, 2027: {x: 4.4, y: 4.2}
-                }
-            },
-            {
-                name: "Fintech Álaga",
-                x: 3.2, y: 4.0, sales: 25000, share: 8,
-                projections: {
-                    2025: {x: 3.5, y: 4.1}, 2026: {x: 3.7, y: 4.2}, 2027: {x: 4.0, y: 4.3}
-                }
-            },
-            {
-                name: "App PliP",
-                x: 2.8, y: 3.5, sales: 15000, share: 5,
-                projections: {
-                    2025: {x: 3.0, y: 3.7}, 2026: {x: 3.2, y: 3.9}, 2027: {x: 3.4, y: 4.1}
-                }
-            },
-            {
-                name: "Servicios Cloud Oracle",
-                x: 3.8, y: 4.2, sales: 35000, share: 12,
-                projections: {
-                    2025: {x: 4.0, y: 4.3}, 2026: {x: 4.1, y: 4.4}, 2027: {x: 4.3, y: 4.5}
-                }
-            },
-            {
-                name: "Analítica de Datos",
-                x: 3.5, y: 4.4, sales: 18000, share: 5,
-                projections: {
-                    2025: {x: 3.8, y: 4.5}, 2026: {x: 4.0, y: 4.6}, 2027: {x: 4.2, y: 4.7}
-                }
-            }
-        ];
+  <!-- JavaScript al final -->
+  <script>
+    let currentFilter = 'Actual';
+    let selectedProductIndex = -1;
+    let products = []; // ✅ Inicialización obligatoria
 
-        let currentFilter = 'actual';
-        const svg = document.getElementById('matrix-svg');
-        const MARGIN = 60;
-        const WIDTH = 800 - 2 * MARGIN;
-        const HEIGHT = 700 - 2 * MARGIN;
+    const svg = document.getElementById('matrix-svg');
+    const tooltip = document.getElementById('tooltip');
+    const MARGIN = 80;
+    const WIDTH = 1000 - 2 * MARGIN;
+    const HEIGHT = 600 - 2 * MARGIN;
 
-        function initializeMatrix() {
-            drawGrid();
-            drawProducts();
-        }
+    // Funciones básicas de inicialización - stubs que serán implementadas en script.js
+    function initializeMatrix() {
+      console.log('Inicializando matriz...');
+      if (typeof loadProductsTable === 'function') loadProductsTable();
+      if (typeof updateDateLabels === 'function') updateDateLabels();
+      if (typeof updateWeights === 'function') {
+        updateWeights('internal');
+        updateWeights('external');
+      }
+      if (typeof drawMatrix === 'function') drawMatrix();
+      if (typeof setupColorPicker === 'function') setupColorPicker();
+    }
 
-        function drawGrid() {
-            svg.innerHTML = '';
-            
-            // Definir regiones de la matriz
-            const regions = [
-                // Fila superior (alta atracción)
-                {x: MARGIN, y: MARGIN, w: WIDTH/3, h: HEIGHT/3, color: '#10b98130', label: 'Invertir/Proteger'},
-                {x: MARGIN + WIDTH/3, y: MARGIN, w: WIDTH/3, h: HEIGHT/3, color: '#10b98130', label: 'Invertir/Crecer'},
-                {x: MARGIN + 2*WIDTH/3, y: MARGIN, w: WIDTH/3, h: HEIGHT/3, color: '#f59e0b30', label: 'Selectivo/Crecer'},
-                
-                // Fila media
-                {x: MARGIN, y: MARGIN + HEIGHT/3, w: WIDTH/3, h: HEIGHT/3, color: '#10b98130', label: 'Invertir/Crecer'},
-                {x: MARGIN + WIDTH/3, y: MARGIN + HEIGHT/3, w: WIDTH/3, h: HEIGHT/3, color: '#f59e0b30', label: 'Selectividad/Ganancias'},
-                {x: MARGIN + 2*WIDTH/3, y: MARGIN + HEIGHT/3, w: WIDTH/3, h: HEIGHT/3, color: '#f59e0b30', label: 'Selectividad/Prueba'},
-                
-                // Fila inferior (baja atracción)
-                {x: MARGIN, y: MARGIN + 2*HEIGHT/3, w: WIDTH/3, h: HEIGHT/3, color: '#f59e0b30', label: 'Selectividad/Prueba'},
-                {x: MARGIN + WIDTH/3, y: MARGIN + 2*HEIGHT/3, w: WIDTH/3, h: HEIGHT/3, color: '#ef444430', label: 'Cosechar/Desinvertir'},
-                {x: MARGIN + 2*WIDTH/3, y: MARGIN + 2*HEIGHT/3, w: WIDTH/3, h: HEIGHT/3, color: '#ef444430', label: 'Desinvertir/Retirar'}
-            ];
+    // Stubs para las funciones que están en script.js
+    function editTitle(titleId) { console.log('editTitle:', titleId); }
+    function saveTitle(titleId) { console.log('saveTitle:', titleId); }
+    function saveTitleOnEnter(event, titleId) { console.log('saveTitleOnEnter:', titleId); }
+    function addInternalFactor() { console.log('addInternalFactor'); }
+    function addExternalFactor() { console.log('addExternalFactor'); }
+    function removeRow(button) { console.log('removeRow'); }
+    function updateMatrix() { console.log('updateMatrix'); }
+    function updateWeights(type) { console.log('updateWeights:', type); }
+    function addProduct() { console.log('addProduct'); }
+    function updateDateLabels() { console.log('updateDateLabels'); }
+    function addDatePeriod() { console.log('addDatePeriod'); }
+    function showAllYears() { console.log('showAllYears'); }
+    function exportMatrix() { console.log('exportMatrix'); }
+    function showProjectionModal() { console.log('showProjectionModal'); }
+    function animateMovements() { console.log('animateMovements'); }
+    function applyCustomColor() { console.log('applyCustomColor'); }
+    function closeProjectionModal() { console.log('closeProjectionModal'); }
+    function saveProjections() { console.log('saveProjections'); }
 
-            // Dibujar regiones
-            regions.forEach(region => {
-                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                rect.setAttribute('x', region.x);
-                rect.setAttribute('y', region.y);
-                rect.setAttribute('width', region.w);
-                rect.setAttribute('height', region.h);
-                rect.setAttribute('fill', region.color);
-                rect.setAttribute('stroke', '#ddd');
-                rect.setAttribute('stroke-width', '1');
-                svg.appendChild(rect);
-
-                // Etiquetas de región
-                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                text.setAttribute('x', region.x + region.w/2);
-                text.setAttribute('y', region.y + region.h/2);
-                text.setAttribute('text-anchor', 'middle');
-                text.setAttribute('dominant-baseline', 'middle');
-                text.setAttribute('fill', '#666');
-                text.setAttribute('font-size', '10');
-                text.setAttribute('font-weight', 'bold');
-                text.textContent = region.label;
-                svg.appendChild(text);
-            });
-
-            // Líneas de cuadrícula
-            for (let i = 1; i < 3; i++) {
-                // Líneas verticales
-                const vLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                vLine.setAttribute('x1', MARGIN + i * WIDTH/3);
-                vLine.setAttribute('y1', MARGIN);
-                vLine.setAttribute('x2', MARGIN + i * WIDTH/3);
-                vLine.setAttribute('y2', MARGIN + HEIGHT);
-                vLine.setAttribute('stroke', '#666');
-                vLine.setAttribute('stroke-width', '2');
-                svg.appendChild(vLine);
-
-                // Líneas horizontales
-                const hLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                hLine.setAttribute('x1', MARGIN);
-                hLine.setAttribute('y1', MARGIN + i * HEIGHT/3);
-                hLine.setAttribute('x2', MARGIN + WIDTH);
-                hLine.setAttribute('y2', MARGIN + i * HEIGHT/3);
-                hLine.setAttribute('stroke', '#666');
-                hLine.setAttribute('stroke-width', '2');
-                svg.appendChild(hLine);
-            }
-
-            // Bordes del marco
-            const border = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-            border.setAttribute('x', MARGIN);
-            border.setAttribute('y', MARGIN);
-            border.setAttribute('width', WIDTH);
-            border.setAttribute('height', HEIGHT);
-            border.setAttribute('fill', 'none');
-            border.setAttribute('stroke', '#333');
-            border.setAttribute('stroke-width', '3');
-            svg.appendChild(border);
-
-            // Etiquetas de los ejes
-            for (let i = 1; i <= 5; i++) {
-                // Eje X (Fortalezas - invertido)
-                const xPos = MARGIN + ((5-i) * WIDTH/4);
-                const xLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                xLabel.setAttribute('x', xPos);
-                xLabel.setAttribute('y', MARGIN + HEIGHT + 30);
-                xLabel.setAttribute('text-anchor', 'middle');
-                xLabel.setAttribute('fill', '#333');
-                xLabel.setAttribute('font-weight', 'bold');
-                xLabel.textContent = i;
-                svg.appendChild(xLabel);
-
-                // Eje Y (Atractivo)
-                const yPos = MARGIN + ((5-i) * HEIGHT/4);
-                const yLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                yLabel.setAttribute('x', MARGIN - 20);
-                yLabel.setAttribute('y', yPos + 5);
-                yLabel.setAttribute('text-anchor', 'middle');
-                yLabel.setAttribute('fill', '#333');
-                yLabel.setAttribute('font-weight', 'bold');
-                yLabel.textContent = i;
-                svg.appendChild(yLabel);
-            }
-
-            // Títulos de los ejes
-            const xTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            xTitle.setAttribute('x', MARGIN + WIDTH/2);
-            xTitle.setAttribute('y', MARGIN + HEIGHT + 50);
-            xTitle.setAttribute('text-anchor', 'middle');
-            xTitle.setAttribute('fill', '#2c5aa0');
-            xTitle.setAttribute('font-weight', 'bold');
-            xTitle.setAttribute('font-size', '14');
-            xTitle.textContent = 'Fortalezas de la Organización →';
-            svg.appendChild(xTitle);
-
-            const yTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            yTitle.setAttribute('x', 20);
-            yTitle.setAttribute('y', MARGIN + HEIGHT/2);
-            yTitle.setAttribute('text-anchor', 'middle');
-            yTitle.setAttribute('fill', '#2c5aa0');
-            yTitle.setAttribute('font-weight', 'bold');
-            yTitle.setAttribute('font-size', '14');
-            yTitle.setAttribute('transform', `rotate(-90 20 ${MARGIN + HEIGHT/2})`);
-            yTitle.textContent = '← Atractivo del Mercado';
-            svg.appendChild(yTitle);
-        }
-
-        function drawProducts() {
-            const maxSales = Math.max(...carvajalProducts.map(p => p.sales));
-
-            carvajalProducts.forEach((product, index) => {
-                const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-                group.setAttribute('id', `product-${index}`);
-
-                // Posición actual
-                const cx = MARGIN + ((5 - product.x) * WIDTH/4);
-                const cy = MARGIN + ((5 - product.y) * HEIGHT/4);
-                const radius = 15 + (product.sales / maxSales) * 25;
-
-                // Color según región
-                let color = '#f59e0b';
-                if (product.x >= 3.33 && product.y >= 3.33) color = '#10b981';
-                else if (product.x <= 2.67 && product.y <= 2.67) color = '#ef4444';
-
-                // Círculo principal
-                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                circle.setAttribute('cx', cx);
-                circle.setAttribute('cy', cy);
-                circle.setAttribute('r', radius);
-                circle.setAttribute('fill', color + '40');
-                circle.setAttribute('stroke', color);
-                circle.setAttribute('stroke-width', '3');
-                circle.setAttribute('class', 'product-circle');
-                group.appendChild(circle);
-
-                // Sector de participación
-                if (product.share > 0) {
-                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                    const angle = (product.share / 100) * 2 * Math.PI;
-                    const x1 = cx + radius * Math.cos(-Math.PI/2);
-                    const y1 = cy + radius * Math.sin(-Math.PI/2);
-                    const x2 = cx + radius * Math.cos(-Math.PI/2 + angle);
-                    const y2 = cy + radius * Math.sin(-Math.PI/2 + angle);
-                    const largeArc = angle > Math.PI ? 1 : 0;
-                    
-                    const d = `M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z`;
-                    path.setAttribute('d', d);
-                    path.setAttribute('fill', '#2c5aa0');
-                    path.setAttribute('opacity', '0.6');
-                    group.appendChild(path);
-                }
-
-                // Etiqueta del producto
-                const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                label.setAttribute('x', cx);
-                label.setAttribute('y', cy - radius - 10);
-                label.setAttribute('text-anchor', 'middle');
-                label.setAttribute('fill', '#333');
-                label.setAttribute('font-size', '10');
-                label.setAttribute('font-weight', 'bold');
-                label.textContent = product.name;
-                group.appendChild(label);
-
-                // Información de coordenadas
-                const coordText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                coordText.setAttribute('x', cx);
-                coordText.setAttribute('y', cy + radius + 15);
-                coordText.setAttribute('text-anchor', 'middle');
-                coordText.setAttribute('fill', '#666');
-                coordText.setAttribute('font-size', '9');
-                coordText.textContent = `(${product.x}, ${product.y})`;
-                group.appendChild(coordText);
-
-                // Dibujar proyecciones si no está en modo "actual"
-                if (currentFilter !== 'actual' && product.projections) {
-                    drawProjections(group, product, cx, cy, color);
-                }
-
-                svg.appendChild(group);
-            });
-        }
-
-        function drawProjections(group, product, startX, startY, color) {
-            const years = ['2025', '2026', '2027'];
-            let prevX = startX, prevY = startY;
-
-            years.forEach((year, index) => {
-                if (currentFilter === 'actual' || currentFilter === year || currentFilter === 'all') {
-                    const projection = product.projections[year];
-                    if (projection) {
-                        const projX = MARGIN + ((5 - projection.x) * WIDTH/4);
-                        const projY = MARGIN + ((5 - projection.y) * HEIGHT/4);
-
-                        // Línea de conexión punteada
-                        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                        line.setAttribute('x1', prevX);
-                        line.setAttribute('y1', prevY);
-                        line.setAttribute('x2', projX);
-                        line.setAttribute('y2', projY);
-                        line.setAttribute('stroke', color);
-                        line.setAttribute('stroke-width', '2');
-                        line.setAttribute('stroke-dasharray', '5,5');
-                        line.setAttribute('opacity', '0.7');
-                        group.appendChild(line);
-
-                        // Círculo de proyección
-                        const projCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                        projCircle.setAttribute('cx', projX);
-                        projCircle.setAttribute('cy', projY);
-                        projCircle.setAttribute('r', 8);
-                        projCircle.setAttribute('fill', color + '30');
-                        projCircle.setAttribute('stroke', color);
-                        projCircle.setAttribute('stroke-width', '2');
-                        projCircle.setAttribute('stroke-dasharray', '3,2');
-                        projCircle.setAttribute('class', 'projection-circle');
-                        
-                        // Tooltip para mostrar año
-                        const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
-                        title.textContent = `Proyección ${year}: (${projection.x}, ${projection.y})`;
-                        projCircle.appendChild(title);
-                        
-                        group.appendChild(projCircle);
-
-                        // Etiqueta del año
-                        const yearLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                        yearLabel.setAttribute('x', projX);
-                        yearLabel.setAttribute('y', projY - 12);
-                        yearLabel.setAttribute('text-anchor', 'middle');
-                        yearLabel.setAttribute('fill', color);
-                        yearLabel.setAttribute('font-size', '8');
-                        yearLabel.setAttribute('font-weight', 'bold');
-                        yearLabel.textContent = year;
-                        group.appendChild(yearLabel);
-
-                        prevX = projX;
-                        prevY = projY;
-                    }
-                }
-            });
-        }
-
-        function filterByYear(year) {
-            currentFilter = year;
-            
-            // Actualizar botones activos
-            document.querySelectorAll('.year-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.year === year) {
-                    btn.classList.add('active');
-                }
-            });
-
-            // Redibujar matriz
-            drawProducts();
-        }
-
-        function showAllYears() {
-            currentFilter = 'all';
-            document.querySelectorAll('.year-btn').forEach(btn => btn.classList.remove('active'));
-            drawProducts();
-        }
-
-        function showProjectionModal() {
-            const modal = document.getElementById('projectionModal');
-            const form = document.getElementById('projectionForm');
-            
-            form.innerHTML = '';
-            
-            carvajalProducts.forEach((product, index) => {
-                const productSection = document.createElement('div');
-                productSection.innerHTML = `
-                    <h4 style="color:#2c5aa0;margin:15px 0 10px 0;border-bottom:1px solid #ccc;padding-bottom:5px;">
-                        ${product.name}
-                    </h4>
-                `;
-                
-                ['2025', '2026', '2027'].forEach(year => {
-                    const projection = product.projections[year];
-                    const formGroup = document.createElement('div');
-                    formGroup.className = 'form-group';
-                    formGroup.innerHTML = `
-                        <label>${year}:</label>
-                        <input type="number" 
-                               id="x_${index}_${year}" 
-                               placeholder="X (Fortaleza)" 
-                               min="1" max="5" step="0.1" 
-                               value="${projection ? projection.x : ''}"
-                               style="text-align:center;">
-                        <input type="number" 
-                               id="y_${index}_${year}" 
-                               placeholder="Y (Atractivo)" 
-                               min="1" max="5" step="0.1" 
-                               value="${projection ? projection.y : ''}"
-                               style="text-align:center;">
-                    `;
-                    productSection.appendChild(formGroup);
-                });
-                
-                form.appendChild(productSection);
-            });
-            
-            modal.style.display = 'block';
-        }
-
-        function closeProjectionModal() {
-            document.getElementById('projectionModal').style.display = 'none';
-        }
-
-        function saveProjections() {
-            carvajalProducts.forEach((product, index) => {
-                ['2025', '2026', '2027'].forEach(year => {
-                    const xInput = document.getElementById(`x_${index}_${year}`);
-                    const yInput = document.getElementById(`y_${index}_${year}`);
-                    
-                    if (xInput.value && yInput.value) {
-                        if (!product.projections) product.projections = {};
-                        product.projections[year] = {
-                            x: parseFloat(xInput.value),
-                            y: parseFloat(yInput.value)
-                        };
-                    }
-                });
-            });
-            
-            closeProjectionModal();
-            drawProducts();
-        }
-
-        function animateMovements() {
-            // Implementar animación simple entre estados
-            const years = ['actual', '2025', '2026', '2027'];
-            let currentIndex = 0;
-            
-            const animate = () => {
-                if (currentIndex < years.length) {
-                    filterByYear(years[currentIndex]);
-                    currentIndex++;
-                    setTimeout(animate, 1500);
-                }
-            };
-            
-            animate();
-        }
-
-        function exportMatrix() {
-            // Crear un canvas temporal para exportar
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = 800;
-            canvas.height = 700;
-            
-            // Dibujar fondo blanco
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // Convertir SVG a imagen
-            const svgData = new XMLSerializer().serializeToString(svg);
-            const img = new Image();
-            img.onload = function() {
-                ctx.drawImage(img, 0, 0);
-                
-                // Descargar imagen
-                const link = document.createElement('a');
-                link.download = 'matriz_carvajal_' + new Date().toISOString().split('T')[0] + '.png';
-                link.href = canvas.toDataURL();
-                link.click();
-            };
-            img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
-        }
-
-        // Inicializar la matriz al cargar la página
-        window.addEventListener('load', initializeMatrix);
-
-        // Cerrar modal al hacer clic fuera
-        window.addEventListener('click', function(event) {
-            const modal = document.getElementById('projectionModal');
-            if (event.target === modal) {
-                closeProjectionModal();
-            }
-        });
-    </script>
-
-</body></html>
+    // Ejecutar al cargar
+    window.onload = initializeMatrix;
+  </script>
+  <script src="script.js"></script> <!-- Archivo con todas las funciones implementadas -->
+</body>
+</html>

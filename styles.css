@@ -1,0 +1,467 @@
+/* Estilos generales del cuerpo */
+body {
+  margin: 0;
+  padding: 10px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+}
+
+/* Encabezado */
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-top: 4px solid #2c5aa0;
+}
+
+.header h1 {
+  color: #2c5aa0;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-block;
+  padding: 5px;
+  border-radius: 5px;
+  transition: background-color 0.2s;
+}
+
+.header h1:hover {
+  background-color: #f0f4f8;
+}
+
+.header .subtitle {
+  color: #666;
+  font-size: 14px;
+  margin-top: 10px;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
+  display: inline-block;
+  transition: background-color 0.2s;
+}
+
+.header .subtitle:hover {
+  background-color: #f0f4f8;
+}
+
+/* Contenedor principal - ahora vertical */
+.main-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  height: auto;
+  min-height: calc(100vh - 150px);
+}
+
+/* Panel de control - ahora horizontal */
+.control-panel {
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+/* Secciones del panel de control */
+.section {
+  margin-bottom: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px;
+  flex: 1;
+  min-width: 300px;
+}
+
+.section h3 {
+  color: #2c5aa0;
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  border-bottom: 2px solid #2c5aa0;
+  padding-bottom: 5px;
+}
+
+/* Contenedor de la matriz - ahora ocupa todo el ancho */
+.matrix-container {
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  width: 100%;
+  height: 600px;
+  min-height: 600px;
+}
+
+/* SVG de la matriz */
+#matrix-svg {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  min-height: 500px;
+}
+
+/* Controles */
+.controls {
+  margin-bottom: 15px;
+}
+
+/* Botones */
+.btn {
+  background: #2c5aa0;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  margin: 2px;
+  transition: background-color 0.2s;
+}
+
+.btn:hover {
+  background: #1e3f73;
+}
+
+.btn-secondary {
+  background: #6c757d;
+}
+
+.btn-secondary:hover {
+  background: #545b62;
+}
+
+.btn-success {
+  background: #28a745;
+}
+
+.btn-success:hover {
+  background: #218838;
+}
+
+.btn-danger {
+  background: #dc3545;
+}
+
+.btn-danger:hover {
+  background: #c82333;
+}
+
+/* Filtros de año */
+.year-filter {
+  display: flex;
+  gap: 5px;
+  margin: 10px 0;
+  flex-wrap: wrap;
+}
+
+.year-btn {
+  padding: 4px 8px;
+  font-size: 10px;
+  border: 1px solid #2c5aa0;
+  background: white;
+  color: #2c5aa0;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.year-btn.active {
+  background: #2c5aa0;
+  color: white;
+}
+
+/* Leyenda */
+.legend {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 8px;
+  margin-bottom: 15px;
+  min-width: 200px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+  font-size: 10px;
+}
+
+.legend-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+/* Tablas */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  margin-bottom: 10px;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 4px;
+  text-align: center;
+}
+
+th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+  color: #2c5aa0;
+}
+
+/* Inputs */
+input[type="text"], input[type="number"], input[type="date"] {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding: 2px;
+  font-size: 10px;
+  text-align: center;
+}
+
+input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus {
+  outline: none;
+  border-color: #2c5aa0;
+  box-shadow: 0 0 3px rgba(44, 90, 160, 0.3);
+}
+
+.factor-weight {
+  background: #e8f4fd !important;
+  font-weight: bold;
+}
+
+/* Selector de colores personalizado */
+.color-picker-section {
+  margin-bottom: 15px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+}
+
+.color-picker-section h4 {
+  color: #2c5aa0;
+  margin: 0 0 10px 0;
+  font-size: 12px;
+}
+
+.color-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 10px 0;
+}
+
+.color-option {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.color-option:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+.color-option.selected {
+  border-color: #2c5aa0;
+  border-width: 3px;
+  transform: scale(1.1);
+}
+
+.custom-color-input {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.custom-color-input input[type="color"] {
+  width: 40px;
+  height: 30px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.custom-color-input label {
+  font-size: 11px;
+  color: #666;
+}
+
+/* Tooltip */
+.tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  pointer-events: none;
+  z-index: 1000;
+  max-width: 200px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.tooltip.show {
+  opacity: 1;
+}
+
+/* Títulos editables */
+.editable-title {
+  position: relative;
+  display: inline-block;
+}
+
+.title-edit {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: white;
+  border: 2px solid #2c5aa0;
+  border-radius: 5px;
+  padding: 5px;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  text-align: center;
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background-color: white;
+  margin: 5% auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #2c5aa0;
+  padding-bottom: 10px;
+}
+
+.close {
+  color: #666;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: #2c5aa0;
+}
+
+/* Formulario de proyecciones */
+.projection-form {
+  display: grid;
+  gap: 15px;
+}
+
+.form-group {
+  display: grid;
+  grid-template-columns: 80px 1fr 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.form-group label {
+  font-weight: bold;
+  color: #2c5aa0;
+}
+
+.form-group input {
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+/* Estadísticas resumidas */
+.summary-stats {
+  background: #e8f4fd;
+  border: 1px solid #2c5aa0;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-size: 12px;
+}
+
+.stat-label {
+  font-weight: bold;
+  color: #2c5aa0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .control-panel {
+    flex-direction: column;
+  }
+  
+  .section {
+    min-width: auto;
+    flex: none;
+  }
+  
+  .main-container {
+    padding: 5px;
+  }
+  
+  .matrix-container {
+    height: 400px;
+    min-height: 400px;
+  }
+}
+
+/* Estilos para productos con colores personalizados */
+.product-circle {
+  transition: all 0.3s ease;
+}
+
+.product-circle:hover {
+  transform: scale(1.1);
+  filter: brightness(1.1);
+}
